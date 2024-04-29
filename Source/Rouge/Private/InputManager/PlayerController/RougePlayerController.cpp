@@ -49,7 +49,6 @@ void ARougePlayerController::SetupInputComponent()
 
 void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 {
-	
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
 	const FRotator Rotation = GetControlRotation();
 	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
@@ -62,6 +61,7 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+	Directionality = InputAxisVector;
 }
 
 void ARougePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)

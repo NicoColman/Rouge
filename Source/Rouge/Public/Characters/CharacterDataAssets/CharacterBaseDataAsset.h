@@ -18,5 +18,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TObjectPtr<class UPaperFlipbook> CharacterFlipbook;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
-	TSubclassOf<UAnimInstance> CharacterAnimInstance;
+	TSubclassOf<class UPaperZDAnimInstance> CharacterAnimInstance;
 };

@@ -16,7 +16,11 @@ class ROUGE_API ARougePlayerController : public APlayerController
 {
 	GENERATED_BODY()
 
+public:
 	ARougePlayerController();
+
+	UPROPERTY(BlueprintReadOnly)
+	FVector2D Directionality;
 
 protected:
 	virtual void BeginPlay() override;
