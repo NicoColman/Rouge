@@ -16,7 +16,7 @@ class ROUGE_API UCharacterBaseDataAsset : public UPrimaryDataAsset
 
 public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
-	TObjectPtr<USkeletalMesh> CharacterMesh;
+	TObjectPtr<class UPaperFlipbook> CharacterFlipbook;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TSubclassOf<UAnimInstance> CharacterAnimInstance;
 };

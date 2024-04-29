@@ -2,31 +2,27 @@
 
 
 #include "Rouge/Public/Characters/CharacterEnemy.h"
+#include "AbilitySystemComponent.h"
+#include "AttributeSet.h"
 
-
-// Sets default values
 ACharacterEnemy::ACharacterEnemy()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	AbilitySystemComponent = CreateDefaultSubobject<UAbilitySystemComponent>(TEXT("AbilitySystemComponent"));
+	AbilitySystemComponent->SetIsReplicated(true);
+	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
+
+	AttributeSet = CreateDefaultSubobject<UAttributeSet>(TEXT("AttributeSet"));
 }
 
-// Called when the game starts or when spawned
-void ACharacterEnemy::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
 void ACharacterEnemy::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
 
-// Called to bind functionality to input
-void ACharacterEnemy::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+void ACharacterEnemy::BeginPlay()
 {
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
+	Super::BeginPlay();
+	
 }
-

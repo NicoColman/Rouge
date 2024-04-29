@@ -8,7 +8,7 @@ public class Rouge : ModuleRules
 	{
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
-		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "PaperZD", "Paper2D" });
+		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput" ,"PaperZD", "Paper2D", "GameplayAbilities", "GameplayTasks", "GameplayTags" });
 
 		PrivateDependencyModuleNames.AddRange(new string[] {  });
 
