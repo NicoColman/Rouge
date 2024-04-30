@@ -40,9 +40,9 @@ private:
 	/** Data Asset */
 	UPROPERTY(EditAnywhere, Category="DataAsset")
 	TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
-	//class IAbilityBaseInterface* AbilityInterface;
+	class IRougeAbilitySystemInterface* AbilityInterface;
 
-	//IAbilityBaseInterface* GetAbilityInterface();
+	IRougeAbilitySystemInterface* GetAbilityInterface();
 	TObjectPtr<class UAbilitySystemComponent> PawnASC;
 	UAbilitySystemComponent* GetASC();
 	void AbilityInputTagPressed(FGameplayTag InputTag);
