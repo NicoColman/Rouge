@@ -32,6 +32,7 @@ public:
     FGameplayTag InputTag_RMB;
     FGameplayTag InputTag_Jump;
     FGameplayTag InputTag_Sprint;
+	FGameplayTag InputTag_Equip;
 	FGameplayTag InputTag_1;
 	FGameplayTag InputTag_2;
     FGameplayTag InputTag_3;
@@ -52,6 +53,7 @@ public:
 
     /** Begin WeaponType Tags*/
 	FGameplayTag WeaponType;
+	FGameplayTag WeaponType_Staff;
 	FGameplayTag WeaponType_Proxy;
 	
 	// Melee Weapons

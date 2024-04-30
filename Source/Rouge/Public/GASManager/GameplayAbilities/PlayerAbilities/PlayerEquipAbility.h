@@ -19,6 +19,8 @@ public:
     virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
 private:
-	AEffectActorBase* UPlayerEquipAbility::GetEffectActorFromActiveEffects(
-		UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& EffectTag);
+	AEffectActorBase* GetEffectActorFromActiveEffects(
+		const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& EffectTag);
+
+	void EquipActor(const FGameplayTag& EffectActorTag) const;
 };

@@ -4,7 +4,11 @@
 #include "GASManager/GameplayAbilities/PlayerAbilities/PlayerEquipAbility.h"
 
 #include "AbilitySystemComponent.h"
+#include "PaperZDCharacter.h"
 #include "GlobalManagers/RougeGameplayTags.h"
+#include "PaperFlipbookComponent.h"
+#include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
+#include "GameFramework/GameModeBase.h"
 
 void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                           const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
@@ -13,18 +17,19 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
 	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	if (!AbilitySystemComponent->HasMatchingGameplayTag(FRougeGameplayTags::Get().StateTag_Player_AbleEquip))
-	{
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
-	}
 	if (ActorInfo->AvatarActor.Get()->HasAuthority())
 	{
-		
+		if (AEffectActorBase* EffectActor = GetEffectActorFromActiveEffects(AbilitySystemComponent, FRougeGameplayTags::Get().WeaponType_Proxy))
+		{
+			const FGameplayTag& EffectActorTag = EffectActor->GetEffectActorDataAsset()->EffectActorTag;
+			EquipActor(EffectActorTag);
+			EffectActor->SetActorLocation(FVector::ZeroVector);
+		}
 	}
 }
 
 AEffectActorBase* UPlayerEquipAbility::GetEffectActorFromActiveEffects(
-	UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& EffectTag)
+	const UAbilitySystemComponent* AbilitySystemComponent, const FGameplayTag& EffectTag)
 {
 	FGameplayEffectQuery Query;
 	Query.EffectTagQuery = FGameplayTagQuery::MakeQuery_MatchTag(EffectTag);
@@ -36,12 +41,29 @@ AEffectActorBase* UPlayerEquipAbility::GetEffectActorFromActiveEffects(
 		if (ActiveEffect && ActiveEffect->Spec.GetEffectContext().GetInstigator())
 		{
 			UObject* SourceObject = ActiveEffect->Spec.GetEffectContext().GetSourceObject();
-			AEffectActorBase* EffectActor = Cast<AEffectActorBase>(SourceObject);
-			if (EffectActor)
+			if (AEffectActorBase* EffectActor = Cast<AEffectActorBase>(SourceObject))
 			{
 				return EffectActor;
 			}
 		}
 	}
 	return nullptr;
+}
+
+void UPlayerEquipAbility::EquipActor(const FGameplayTag& EffectActorTag) const
+{
+	UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	AbilitySystemComponent->AddLooseGameplayTag(EffectActorTag);
+	AbilitySystemComponent->AddReplicatedLooseGameplayTag(EffectActorTag);
+	IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode());
+	if (!GameMode) return;
+	
+	AActor* Weapon = GameMode->GetWeaponFromPool(EffectActorTag);
+	if (!Weapon) return;
+
+	APaperZDCharacter* Avatar = Cast<APaperZDCharacter>(GetActorInfo().AvatarActor.Get());
+	if (!Avatar) return;
+	
+	Weapon->AttachToComponent(Avatar->GetSprite(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("SOCKET_Weapon"));
+	
 }

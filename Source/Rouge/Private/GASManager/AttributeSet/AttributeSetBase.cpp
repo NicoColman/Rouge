@@ -119,7 +119,7 @@ void UAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute,
 	if (Attribute == GetSpeedAttribute())
 	{
 		AActor* Actor = GetOwningAbilitySystemComponent()->AbilityActorInfo->AvatarActor.Get();
-		if (ACharacter* Character = Cast<ACharacter>(Actor))
+		if (const ACharacter* Character = Cast<ACharacter>(Actor))
 		{
 			Character->GetCharacterMovement()->MaxWalkSpeed = NewValue;
 		}

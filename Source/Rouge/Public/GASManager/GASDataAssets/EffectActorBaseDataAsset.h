@@ -75,4 +75,7 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	bool bDestroyOnEffectRemoval;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	TObjectPtr<class UPaperFlipbook> WeaponSprite;
 };

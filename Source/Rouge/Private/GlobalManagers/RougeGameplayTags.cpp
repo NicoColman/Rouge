@@ -36,6 +36,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("InputTag.Sprint"),
 		FString("Input tag for Sprint")
 		);
+	GameplayTags.InputTag_Equip = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Equip"),
+		FString("Input tag for Equip")
+		);
 	GameplayTags.InputTag_1 = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.1"),
 		FString("Input tag for 1")
@@ -89,6 +93,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	FName("WeaponType"),
 	FString("Weapon Type")
 	);
+	GameplayTags.WeaponType_Staff = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff"),
+		FString("Weapon Type Staff")
+		);
 	GameplayTags.WeaponType_Proxy = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("WeaponType.Proxy"),
 		FString("Weapon Type Proxy")
