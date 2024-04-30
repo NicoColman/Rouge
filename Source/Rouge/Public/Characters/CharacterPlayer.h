@@ -19,5 +19,8 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-	
+
+	/** Being CharacterBase */
+	virtual void InitializeAbilitySystem() override;
+	/** End CharacterBase */
 };

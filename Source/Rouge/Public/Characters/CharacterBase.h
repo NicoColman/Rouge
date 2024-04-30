@@ -34,10 +34,12 @@ protected:
 
 	/** Begin Ability System */
 	UPROPERTY()
-	TObjectPtr<class UAbilitySystemComponent> AbilitySystemComponent;
+	TObjectPtr<UAbilitySystemComponent> AbilitySystemComponent;
 	UPROPERTY()
 	TObjectPtr<class UAttributeSet> AttributeSet;
 	virtual void InitializeAbilitySystem();
+	virtual void InitializeAttributes();
 	virtual void AddCharacterAbilities();
+	virtual void ApplyEffectToSelf(TSubclassOf<class UGameplayEffect> const Effect, const int32 Level) const;
 	/** End Ability System */
 };

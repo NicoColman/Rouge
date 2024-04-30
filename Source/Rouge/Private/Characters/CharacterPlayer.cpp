@@ -2,6 +2,9 @@
 
 
 #include "Rouge/Public/Characters/CharacterPlayer.h"
+#include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
+#include "AbilitySystemComponent.h"
+#include "GameFramework/PlayerState.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -16,11 +19,16 @@ void ACharacterPlayer::Tick(float DeltaTime)
 void ACharacterPlayer::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
+
+	InitializeAbilitySystem();
+	AddCharacterAbilities();
 }
 
 void ACharacterPlayer::OnRep_PlayerState()
 {
 	Super::OnRep_PlayerState();
+
+	InitializeAbilitySystem();
 }
 
 void ACharacterPlayer::BeginPlay()
@@ -29,3 +37,35 @@ void ACharacterPlayer::BeginPlay()
 	
 }
 
+void ACharacterPlayer::InitializeAbilitySystem()
+{
+	const IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(GetPlayerState());
+	check(GetPlayerState());
+	if (AbilitySystemInterface)
+	{
+		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+		AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
+	}
+	if (AbilitySystemComponent)
+	{
+		if (IRougeAbilitySystemInterface* AbilitySystemBaseInterface = Cast<IRougeAbilitySystemInterface>(AbilitySystemComponent))
+		{
+			AbilitySystemBaseInterface->AbilityActorInfoSet();
+		}
+	}
+	/*
+	if (IAttributeSetBaseInterface* AttributeSetInterface = Cast<IAttributeSetBaseInterface>(GetPlayerState()))
+	{
+		AttributeSet = AttributeSetInterface->GetAttributeSet();
+	}
+
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	{
+		if (IHUDOnUpdateInterface* HUDInterface = Cast<IHUDOnUpdateInterface>(PC->GetHUD()))
+		{
+			HUDInterface->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);
+		}
+	}
+	*/
+	InitializeAttributes();
+}

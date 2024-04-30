@@ -27,20 +27,24 @@ protected:
 	virtual void SetupInputComponent() override;
 
 private:
+	UPROPERTY()
+	TObjectPtr<APawn> CachedPawn;
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> PlayerBaseContext;
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputAction> MoveAction;
-
+	
 	void Move(const FInputActionValue& InputActionValue);
 
 	/** Data Asset */
-	//UPROPERTY(EditAnywhere, Category="DataAsset")
-	//TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
+	UPROPERTY(EditAnywhere, Category="DataAsset")
+	TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
 	//class IAbilityBaseInterface* AbilityInterface;
 
 	//IAbilityBaseInterface* GetAbilityInterface();
+	TObjectPtr<class UAbilitySystemComponent> PawnASC;
+	UAbilitySystemComponent* GetASC();
 	void AbilityInputTagPressed(FGameplayTag InputTag);
 	void AbilityInputTagReleased(FGameplayTag InputTag);
 	void AbilityInputTagHeld(FGameplayTag InputTag);

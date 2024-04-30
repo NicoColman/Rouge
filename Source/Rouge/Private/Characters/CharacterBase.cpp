@@ -2,11 +2,15 @@
 
 
 #include "Rouge/Public/Characters/CharacterBase.h"
+
+#include "GameplayEffectTypes.h"
 #include "Rouge/Public/Characters/CharacterDataAssets/CharacterBaseDataAsset.h"
 #include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
 #include "Camera/CameraComponent.h"
+#include "AbilitySystemComponent.h"
 #include "PaperZDAnimationComponent.h"
+#include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 
 
 ACharacterBase::ACharacterBase()
@@ -25,7 +29,6 @@ ACharacterBase::ACharacterBase()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->SetActive(true);
-	
 }
 
 void ACharacterBase::BeginPlay()
@@ -41,6 +44,29 @@ void ACharacterBase::InitializeAbilitySystem()
 {
 }
 
+void ACharacterBase::InitializeAttributes()
+{
+	ApplyEffectToSelf(CharacterDataAsset->DefaultAttributeEffect, 1);
+	ApplyEffectToSelf(CharacterDataAsset->VitalAttributeEffect, 1);
+}
+
 void ACharacterBase::AddCharacterAbilities()
 {
+	if (!HasAuthority()) return;
+	if (AbilitySystemComponent)
+	{
+		CastChecked<IRougeAbilitySystemInterface>(AbilitySystemComponent)->AddCharacterAbilities(CharacterDataAsset->StartupAbilities);
+	}
+}
+
+void ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> const Effect, const int32 Level) const
+{
+	check(AbilitySystemComponent);
+	FGameplayEffectContextHandle EffectContext = AbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(this);
+	const FGameplayEffectSpecHandle SpecHandle = AbilitySystemComponent->MakeOutgoingSpec(Effect, Level, EffectContext);
+	if (SpecHandle.IsValid())
+	{
+		AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);
+	}
 }

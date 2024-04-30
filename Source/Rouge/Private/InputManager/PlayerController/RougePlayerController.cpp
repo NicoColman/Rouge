@@ -4,6 +4,10 @@
 #include "InputManager/PlayerController/RougePlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "InputManager/EnhancedInputComponents/RougeEnhancedInputComponent.h"
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
+
 
 
 ARougePlayerController::ARougePlayerController()
@@ -33,18 +37,18 @@ void ARougePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	UEnhancedInputComponent* EnhancedInputComponent = CastChecked<UEnhancedInputComponent>(InputComponent);
+	URougeEnhancedInputComponent* EnhancedInputComponentBase = CastChecked<URougeEnhancedInputComponent>(InputComponent);
 
 	// Basic
-	EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARougePlayerController::Move);
+	EnhancedInputComponentBase->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARougePlayerController::Move);
 
 	/** Data Asset*/
-	/**
-	UEnhancedInputComponentBase* EnhancedInputComponentBase = CastChecked<UEnhancedInputComponentBase>(InputComponent);
+	
 	EnhancedInputComponentBase->BindAbilityActions(InputConfigDataAsset, this,
-		&AGamePlayerController::AbilityInputTagPressed, &AGamePlayerController::AbilityInputTagReleased,
-		&AGamePlayerController::AbilityInputTagHeld);
-		*/
+		&ARougePlayerController::AbilityInputTagPressed, &ARougePlayerController::AbilityInputTagReleased,
+		&ARougePlayerController::AbilityInputTagHeld);
+		
+		
 }
 
 void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
@@ -64,8 +68,17 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 	Directionality = InputAxisVector;
 }
 
+UAbilitySystemComponent* ARougePlayerController::GetASC()
+{
+	if (PawnASC) return PawnASC;
+	return PawnASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>());
+}
+
 void ARougePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
 {
+	//if ((GetASC() && GetASC()->HasMatchingGameplayTag(
+//FGameplayTagsSingleton::Get().Player_Block_InputPressed)) || !GetAbilityInterface()) return;
+	//GetAbilityInterface()->AbilityInputTagPressed(InputTag);
 }
 
 void ARougePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
