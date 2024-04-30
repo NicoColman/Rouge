@@ -7,12 +7,13 @@
 #include "InputManager/EnhancedInputComponents/RougeEnhancedInputComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-
+#include "GlobalManagers/RougeGameplayTags.h"
+#include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 
 
 ARougePlayerController::ARougePlayerController()
 {
-
+	AbilityInterface = nullptr;
 }
 
 void ARougePlayerController::BeginPlay()
@@ -36,19 +37,39 @@ void ARougePlayerController::BeginPlay()
 void ARougePlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
-
 	URougeEnhancedInputComponent* EnhancedInputComponentBase = CastChecked<URougeEnhancedInputComponent>(InputComponent);
 
 	// Basic
 	EnhancedInputComponentBase->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARougePlayerController::Move);
 
 	/** Data Asset*/
-	
 	EnhancedInputComponentBase->BindAbilityActions(InputConfigDataAsset, this,
 		&ARougePlayerController::AbilityInputTagPressed, &ARougePlayerController::AbilityInputTagReleased,
 		&ARougePlayerController::AbilityInputTagHeld);
-		
-		
+}
+
+void ARougePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+{
+	if ((GetASC() && GetASC()->HasMatchingGameplayTag(
+		FRougeGameplayTags::Get().Player_Block_InputPressed)) || !GetAbilityInterface()) return;
+	
+	GetAbilityInterface()->AbilityInputTagPressed(InputTag);
+}
+
+void ARougePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
+{
+	if ((GetASC() && GetASC()->HasMatchingGameplayTag(
+		FRougeGameplayTags::Get().Player_Block_InputReleased)) || !GetAbilityInterface()) return;
+	
+	GetAbilityInterface()->AbilityInputTagReleased(InputTag);
+}
+
+void ARougePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
+{
+	if ((GetASC() && GetASC()->HasMatchingGameplayTag(
+		FRougeGameplayTags::Get().Player_Block_InputHeld)) || !GetAbilityInterface()) return;
+
+	GetAbilityInterface()->AbilityInputTagHeld(InputTag);
 }
 
 void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
@@ -74,17 +95,8 @@ UAbilitySystemComponent* ARougePlayerController::GetASC()
 	return PawnASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(GetPawn<APawn>());
 }
 
-void ARougePlayerController::AbilityInputTagPressed(FGameplayTag InputTag)
+IRougeAbilitySystemInterface* ARougePlayerController::GetAbilityInterface()
 {
-	//if ((GetASC() && GetASC()->HasMatchingGameplayTag(
-//FGameplayTagsSingleton::Get().Player_Block_InputPressed)) || !GetAbilityInterface()) return;
-	//GetAbilityInterface()->AbilityInputTagPressed(InputTag);
-}
-
-void ARougePlayerController::AbilityInputTagReleased(FGameplayTag InputTag)
-{
-}
-
-void ARougePlayerController::AbilityInputTagHeld(FGameplayTag InputTag)
-{
+	if (AbilityInterface) return AbilityInterface;
+	return AbilityInterface = Cast<IRougeAbilitySystemInterface>(GetASC());
 }

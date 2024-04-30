@@ -3,6 +3,8 @@
 
 #include "GASManager/AbilitySystem/ASCBase.h"
 
+#include "GASManager/GameplayAbilities/InputBaseAbility.h"
+
 void UASCBase::AbilityActorInfoSet()
 {
 	OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UASCBase::ClientEffectApplied);
@@ -14,9 +16,9 @@ void UASCBase::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>
 	{
 		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1, 0);
 
-		//if (const UInputBaseAbility* AbilityBase = Cast<UInputBaseAbility>(AbilitySpec.Ability))
+		if (const UInputBaseAbility* AbilityBase = Cast<UInputBaseAbility>(AbilitySpec.Ability))
 		{
-		//	AbilitySpec.DynamicAbilityTags.AddTag(AbilityBase->StartupInputTag);
+			AbilitySpec.DynamicAbilityTags.AddTag(AbilityBase->StartupInputTag);
 			GiveAbility(AbilitySpec);
 		}
 	}
