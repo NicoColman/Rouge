@@ -5,6 +5,7 @@
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 #include "AbilitySystemComponent.h"
 #include "GameFramework/PlayerState.h"
+#include "PlayerState/PlayerStateBase.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -35,6 +36,12 @@ void ACharacterPlayer::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+int32 ACharacterPlayer::GetCharacterLevel() const
+{
+	const APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	return PS ? PS->GetCharacterLevel() : 1;
 }
 
 void ACharacterPlayer::InitializeAbilitySystem()

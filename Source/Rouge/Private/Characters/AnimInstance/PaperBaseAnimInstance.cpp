@@ -11,14 +11,3 @@ void UPaperBaseAnimInstance::OnInit_Implementation()
 
 	CachedCharacter = Cast<APaperZDCharacter>(GetOwningActor());
 }
-
-FVector2D UPaperBaseAnimInstance::GetDirection() const
-{
-	if (!CachedCharacter) return FVector2D::ZeroVector;
-	
-	if (const ARougePlayerController* PlayerController = Cast<ARougePlayerController>(CachedCharacter->GetController()))
-	{
-		return PlayerController->Directionality;
-	}
-	return FVector2D::ZeroVector;
-}

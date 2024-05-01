@@ -66,6 +66,7 @@ void AWeaponBase::StartAsyncLoadDataAsset()
 void AWeaponBase::GetAssetsToLoad()
 {
 	AssetToLoad.Add(WeaponDataAsset->WeaponFlipbook.ToSoftObjectPath());
+	AssetToLoad.Add(WeaponDataAsset->Projectile.ToSoftObjectPath());
 }
 
 void AWeaponBase::RequestAsyncLoadDataAsset()
@@ -78,5 +79,6 @@ void AWeaponBase::RequestAsyncLoadDataAsset()
 void AWeaponBase::OnAssetsLoaded()
 {
 	WeaponFlipbookComponent->SetFlipbook(WeaponDataAsset->WeaponFlipbook.Get());
-	UE_LOG(LogTemp, Warning, TEXT("WeaponFlipbookComponent->SetFlipbook(WeaponDataAsset->WeaponFlipbook.Get());"));
+	WeaponDataAsset->WeaponFlipbookComponent = WeaponFlipbookComponent;
+	WeaponDataAsset->WeaponActor = this;
 }

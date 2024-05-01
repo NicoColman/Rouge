@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "GASManager/GASDataAssets/EffectActorBaseDataAsset.h"
+#include "PaperFlipbook.h"
+#include "PaperFlipbookComponent.h"
 #include "EffectActorBase.generated.h"
 
 UCLASS()
@@ -71,6 +73,9 @@ protected:
 	TObjectPtr<USkeletalMeshComponent> SkeletalMeshActor;
 
 	UPROPERTY()
+	TObjectPtr<UPaperFlipbookComponent> FlipbookActor;
+
+	UPROPERTY()
 	TObjectPtr<class USphereComponent> SphereComponent;
 
 	UPROPERTY(EditAnywhere)
@@ -102,6 +107,11 @@ ComponentType* AEffectActorBase::CreateSpecificActorComponent(UObject* Mesh)
 		{
 			USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(Mesh);
 			Cast<USkeletalMeshComponent>(NewComponent)->SetSkeletalMesh(SkeletalMesh);
+		}
+		else if (ComponentType::StaticClass() == UPaperFlipbookComponent::StaticClass())
+		{
+			UPaperFlipbook* Flipbook = Cast<UPaperFlipbook>(Mesh);
+			Cast<UPaperFlipbookComponent>(NewComponent)->SetFlipbook(Flipbook);
 		}
 		NewComponent->RegisterComponent();
 		NewComponent->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);

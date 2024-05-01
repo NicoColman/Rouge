@@ -17,6 +17,10 @@ public:
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+	/** Begin ICharacterBaseInterface */
+	virtual int32 GetCharacterLevel() const override;
+	/** End ICharacterBaseInterface */
+
 protected:
 	virtual void BeginPlay() override;
 

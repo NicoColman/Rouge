@@ -19,9 +19,6 @@ class ROUGE_API ARougePlayerController : public APlayerController
 public:
 	ARougePlayerController();
 
-	UPROPERTY(BlueprintReadOnly)
-	FVector2D Directionality;
-
 protected:
 	virtual void BeginPlay() override;
 	virtual void SetupInputComponent() override;
@@ -36,7 +33,7 @@ private:
 	TObjectPtr<class UInputAction> MoveAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
-
+	
 	/** Data Asset */
 	UPROPERTY(EditAnywhere, Category="DataAsset")
 	TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
