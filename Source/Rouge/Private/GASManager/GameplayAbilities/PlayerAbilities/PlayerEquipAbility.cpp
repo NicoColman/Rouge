@@ -26,6 +26,7 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 			EffectActor->SetActorLocation(FVector::ZeroVector);
 		}
 	}
+	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 
 AEffectActorBase* UPlayerEquipAbility::GetEffectActorFromActiveEffects(
@@ -61,9 +62,7 @@ void UPlayerEquipAbility::EquipActor(const FGameplayTag& EffectActorTag) const
 	AActor* Weapon = GameMode->GetWeaponFromPool(EffectActorTag);
 	if (!Weapon) return;
 
-	APaperZDCharacter* Avatar = Cast<APaperZDCharacter>(GetActorInfo().AvatarActor.Get());
+	const APaperZDCharacter* Avatar = Cast<APaperZDCharacter>(GetActorInfo().AvatarActor.Get());
 	if (!Avatar) return;
-	
 	Weapon->AttachToComponent(Avatar->GetSprite(), FAttachmentTransformRules::SnapToTargetIncludingScale, FName("SOCKET_Weapon"));
-	
 }

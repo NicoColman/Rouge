@@ -44,6 +44,8 @@ void AEffectActorBase::BeginPlay()
 	EffectRemovalPolicy = EffectActorDataAsset->EffectRemovalPolicy;
 	ActorLevel = EffectActorDataAsset->ActorLevel;
 
+	const FVector NewScale = FVector(1.f, 1.f, 1.f) * EffectActorDataAsset->ActorScale;
+
 	switch (ObjectType)
 	{
 	case EObjectType::EOT_None:
@@ -53,18 +55,27 @@ void AEffectActorBase::BeginPlay()
 		{
 			UStaticMesh* StaticMesh = Cast<UStaticMesh>(EffectActorDataAsset->EffectActorObject);
 			StaticMeshActor = CreateSpecificActorComponent<UStaticMeshComponent>(StaticMesh);
+			StaticMeshActor->SetRelativeScale3D(NewScale);
 		}
 		break;
 	case EObjectType::EOT_SkeletalMesh:
 		{
 			USkeletalMesh* SkeletalMesh = Cast<USkeletalMesh>(EffectActorDataAsset->EffectActorObject);
 			SkeletalMeshActor = CreateSpecificActorComponent<USkeletalMeshComponent>(SkeletalMesh);
+			SkeletalMeshActor->SetRelativeScale3D(NewScale);
 		}
 		break;
+	case EObjectType::EOT_Flipbook:
+		{
+			UPaperFlipbook* Flipbook = Cast<UPaperFlipbook>(EffectActorDataAsset->EffectActorObject);
+			FlipbookActor = CreateSpecificActorComponent<UPaperFlipbookComponent>(Flipbook);
+			FlipbookActor->SetRelativeScale3D(NewScale);
+			FlipbookActor->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+		}
 	default:
 		break;
 	}
-	if ((SkeletalMeshActor || StaticMeshActor) && EffectActorDataAsset->bUseSphereOverlap)
+	if ((SkeletalMeshActor || StaticMeshActor || FlipbookActor) && EffectActorDataAsset->bUseSphereOverlap)
 	{
 		SetSphereComponent();
 	}

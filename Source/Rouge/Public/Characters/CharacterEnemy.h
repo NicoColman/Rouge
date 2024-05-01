@@ -15,6 +15,14 @@ public:
 	ACharacterEnemy();
 	virtual void Tick(float DeltaTime) override;
 
+	/** Begin ICharacterBaseInterface */
+	virtual int32 GetCharacterLevel() const override { return Level; }
+	/** End ICharacterBaseInterface */
+
 protected:
 	virtual void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	int32 Level;
+
 };

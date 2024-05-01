@@ -16,9 +16,6 @@ class ROUGE_API UPaperBaseAnimInstance : public UPaperZDAnimInstance
 
 public:
 	virtual void OnInit_Implementation() override;
-
-	UFUNCTION()
-	FVector2D GetDirection() const;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Character")

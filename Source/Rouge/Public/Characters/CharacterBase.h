@@ -5,10 +5,11 @@
 #include "CoreMinimal.h"
 #include "PaperZDCharacter.h"
 #include "AbilitySystemInterface.h"
+#include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
 #include "CharacterBase.generated.h"
 
 UCLASS(Abstract)
-class ROUGE_API ACharacterBase : public APaperZDCharacter, public IAbilitySystemInterface
+class ROUGE_API ACharacterBase : public APaperZDCharacter, public IAbilitySystemInterface, public ICharacterBaseInterface
 {
 	GENERATED_BODY()
 
@@ -18,6 +19,11 @@ public:
 	/** Begin IAbilitySystemInterface */
 	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override {return AbilitySystemComponent;}
 	/** End IAbilitySystemInterface */
+
+	/** Begin ICharacterBaseInterface */
+	virtual int32 GetCharacterLevel() const override;
+	virtual void SetPlayerWeapon(class AActor* Weapon) override;
+	/** End ICharacterBaseInterface */
 
 protected:
 	virtual void BeginPlay() override;

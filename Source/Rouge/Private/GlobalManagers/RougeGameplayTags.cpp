@@ -93,13 +93,43 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	FName("WeaponType"),
 	FString("Weapon Type")
 	);
+	GameplayTags.WeaponType_Proxy = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("WeaponType.Proxy"),
+	FString("Weapon Type Proxy")
+	);
+
+	// Staff Weapons
 	GameplayTags.WeaponType_Staff = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("WeaponType.Staff"),
 		FString("Weapon Type Staff")
 		);
-	GameplayTags.WeaponType_Proxy = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("WeaponType.Proxy"),
-		FString("Weapon Type Proxy")
+	GameplayTags.WeaponType_Staff_Blue = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Blue"),
+		FString("Weapon Type Staff Blue")
+		);
+	GameplayTags.WeaponType_Staff_Red = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Red"),
+		FString("Weapon Type Staff Red")
+		);
+	GameplayTags.WeaponType_Staff_Green = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Green"),
+		FString("Weapon Type Staff Green")
+		);
+	GameplayTags.WeaponType_Staff_Yellow = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Yellow"),
+		FString("Weapon Type Staff Yellow")
+		);
+	GameplayTags.WeaponType_Staff_Purple = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Purple"),
+		FString("Weapon Type Staff Purple")
+		);
+	GameplayTags.WeaponType_Staff_White = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.White"),
+		FString("Weapon Type Staff White")
+		);
+	GameplayTags.WeaponType_Staff_Combined = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("WeaponType.Staff.Combined"),
+		FString("Weapon Type Staff Combined")
 		);
 
 	// Melee Weapons
@@ -135,21 +165,24 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	/** End Effect Tags */
 
 	/** Begin GameplayCue Tags */
-	// Enemy GameplayCue Tags
-	GameplayTags.GameplayCue_Enemy_Melee_HitReactLoop = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("GameplayCue.Enemy.Melee.HitReactLoop"),
-		FString("Gameplay Cue Enemy Melee Hit React Loop")
+	// Player GameplayCue Tags
+	GameplayTags.GameplayCue_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.Spell.Cast"),
+		FString("Gameplay Cue for Spell Cast Ability")
 		);
 	/** End GameplayCue Tags */
 
-	/** Begin Enemy Event Tags */
-
+	/** Begin Event Tags */
+	GameplayTags.GameplayEvent_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayEvent.Ability.Spell.Cast"),
+		FString("Gameplay Event for Spell Cast Ability")
+		);
 	// Enemy Event Tags
 	GameplayTags.Event_Enemy_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Event.Enemy.HitReact"),
 		FString("Event Enemy Hit React")
 		);
-	/** End Enemy Event Tags */
+	/** End Event Tags */
 }
 
 FGameplayTag FRougeGameplayTags::GetMatchTagFromASC(UAbilitySystemComponent* ASC, const FName& RequestedTag)

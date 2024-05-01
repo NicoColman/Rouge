@@ -14,6 +14,8 @@ ACharacterEnemy::ACharacterEnemy()
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Minimal);
 
 	AttributeSet = CreateDefaultSubobject<UAttributeSet>(TEXT("AttributeSet"));
+
+	Level = 1;
 }
 
 void ACharacterEnemy::Tick(float DeltaTime)

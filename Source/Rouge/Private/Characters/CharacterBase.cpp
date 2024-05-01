@@ -46,8 +46,10 @@ void ACharacterBase::InitializeAbilitySystem()
 
 void ACharacterBase::InitializeAttributes()
 {
-	ApplyEffectToSelf(CharacterDataAsset->DefaultAttributeEffect, 1);
+	ApplyEffectToSelf(CharacterDataAsset->PrimaryAttributeEffect, 1);
+	ApplyEffectToSelf(CharacterDataAsset->SecondaryAttributeEffect, 1);
 	ApplyEffectToSelf(CharacterDataAsset->VitalAttributeEffect, 1);
+	
 }
 
 void ACharacterBase::AddCharacterAbilities()
@@ -69,4 +71,13 @@ void ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> const Effect
 	{
 		AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);
 	}
+}
+
+int32 ACharacterBase::GetCharacterLevel() const
+{
+	return 1;
+}
+
+void ACharacterBase::SetPlayerWeapon(AActor* Weapon)
+{
 }

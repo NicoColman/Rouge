@@ -53,8 +53,17 @@ public:
 
     /** Begin WeaponType Tags*/
 	FGameplayTag WeaponType;
-	FGameplayTag WeaponType_Staff;
 	FGameplayTag WeaponType_Proxy;
+
+	// Staffs
+	FGameplayTag WeaponType_Staff;
+	FGameplayTag WeaponType_Staff_Blue;
+	FGameplayTag WeaponType_Staff_Red;
+	FGameplayTag WeaponType_Staff_Green;
+	FGameplayTag WeaponType_Staff_Yellow;
+	FGameplayTag WeaponType_Staff_Purple;
+	FGameplayTag WeaponType_Staff_White;
+	FGameplayTag WeaponType_Staff_Combined;
 	
 	// Melee Weapons
 	FGameplayTag WeaponType_Melee;
@@ -74,13 +83,14 @@ public:
 	/** End Effect Tags */
 
 	// Enemy GameplayCue Tags
-	FGameplayTag GameplayCue_Enemy_Melee_HitReactLoop;
+	FGameplayTag GameplayCue_Ability_Spell_Cast;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */
 	// Player Event Tags
 	
 	// Enemy Event Tags
+	FGameplayTag GameplayEvent_Ability_Spell_Cast;
 	FGameplayTag Event_Enemy_HitReact;
 	/** End Event Tags */
 	

@@ -24,7 +24,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TSubclassOf<class UGameplayEffect> DefaultAttributeEffect;
+	TSubclassOf<class UGameplayEffect> PrimaryAttributeEffect;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	TSubclassOf<class UGameplayEffect> SecondaryAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TSubclassOf<UGameplayEffect> VitalAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")

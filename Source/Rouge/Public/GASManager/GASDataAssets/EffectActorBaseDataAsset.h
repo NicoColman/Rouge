@@ -14,6 +14,7 @@ enum class EObjectType : uint8
 	EOT_None UMETA(DisplayName = "None"),
 	EOT_StaticMesh UMETA(DisplayName = "StaticMesh"),
 	EOT_SkeletalMesh UMETA(DisplayName = "SkeletalMesh"),
+	EOT_Flipbook UMETA(DisplayName = "FlipbookMesh")
 };
 
 UENUM(BlueprintType)
@@ -48,6 +49,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	float ActorLevel = 1.f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	float ActorScale = 1.f;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	EObjectType ObjectType;

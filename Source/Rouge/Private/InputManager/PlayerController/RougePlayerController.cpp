@@ -10,7 +10,6 @@
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 
-
 ARougePlayerController::ARougePlayerController()
 {
 	AbilityInterface = nullptr;
@@ -19,6 +18,10 @@ ARougePlayerController::ARougePlayerController()
 void ARougePlayerController::BeginPlay()
 {
 	Super::BeginPlay();
+
+	bShowMouseCursor = true;
+	bEnableClickEvents = true;
+	bEnableMouseOverEvents = true;
 
 	if (!ensure(PlayerBaseContext))
 	{
@@ -86,7 +89,6 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
-	Directionality = InputAxisVector;
 }
 
 UAbilitySystemComponent* ARougePlayerController::GetASC()
