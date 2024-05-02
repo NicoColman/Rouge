@@ -27,6 +27,9 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Base")
 	TSoftClassPtr<class AFireBallProjectile> Projectile;
 
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Base")
+	TSubclassOf<class UGameplayEffect> DamageEffectClass;
+	
 	UPROPERTY()
 	TObjectPtr<class UPaperFlipbookComponent> WeaponFlipbookComponent;
 	

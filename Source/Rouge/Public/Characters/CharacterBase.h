@@ -27,13 +27,6 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	/** Being Basic Character Components */
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<class USpringArmComponent> CameraBoom;
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
-	TObjectPtr<class UCameraComponent> FollowCamera;
-	/** End Basic Character Components */
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DataAsset")
 	TObjectPtr<class UCharacterBaseDataAsset> CharacterDataAsset;

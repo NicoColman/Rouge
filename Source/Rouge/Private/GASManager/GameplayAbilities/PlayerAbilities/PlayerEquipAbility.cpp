@@ -26,6 +26,9 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 			EffectActor->SetActorLocation(FVector::ZeroVector);
 		}
 	}
+	FGameplayCueParameters CueParams;
+	CueParams.Location = ActorInfo->AvatarActor.Get()->GetActorLocation();
+	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Pickup, CueParams);
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 

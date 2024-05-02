@@ -177,6 +177,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("GameplayEvent.Ability.Spell.Cast"),
 		FString("Gameplay Event for Spell Cast Ability")
 		);
+	GameplayTags.GameplayCue_Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.Pickup"),
+		FString("Gameplay Cue for Ability Pickup")
+		);
 	// Enemy Event Tags
 	GameplayTags.Event_Enemy_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Event.Enemy.HitReact"),

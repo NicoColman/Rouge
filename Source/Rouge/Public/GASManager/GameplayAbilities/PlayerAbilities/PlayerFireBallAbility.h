@@ -18,8 +18,10 @@ class ROUGE_API UPlayerFireBallAbility : public UInputBaseAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
+	
 private:
 	void GetWeaponAssets();
+	void ApplyDamageEffect(class AFireBallProjectile* SpawningProjectile) const;
 	
 	UFUNCTION()
 	void OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
@@ -28,4 +30,5 @@ private:
 	FGameplayTag WeaponTag;
 	TObjectPtr<class UPaperFlipbookComponent> WeaponFlipbook;
 	TSubclassOf<class AFireBallProjectile> ProjectileClass;
+	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

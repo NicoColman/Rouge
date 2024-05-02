@@ -84,6 +84,7 @@ public:
 
 	// Enemy GameplayCue Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
+	FGameplayTag GameplayCue_Ability_Pickup;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */

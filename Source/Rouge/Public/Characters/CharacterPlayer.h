@@ -27,4 +27,11 @@ protected:
 	/** Being CharacterBase */
 	virtual void InitializeAbilitySystem() override;
 	/** End CharacterBase */
+
+	/** Being Basic Character Components */
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class USpringArmComponent> CameraBoom;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<class UCameraComponent> FollowCamera;
+	/** End Basic Character Components */
 };

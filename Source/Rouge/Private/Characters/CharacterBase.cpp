@@ -5,9 +5,7 @@
 
 #include "GameplayEffectTypes.h"
 #include "Rouge/Public/Characters/CharacterDataAssets/CharacterBaseDataAsset.h"
-#include "GameFramework/SpringArmComponent.h"
 #include "PaperFlipbookComponent.h"
-#include "Camera/CameraComponent.h"
 #include "AbilitySystemComponent.h"
 #include "PaperZDAnimationComponent.h"
 #include "Components/CapsuleComponent.h"
@@ -19,20 +17,15 @@ ACharacterBase::ACharacterBase()
 	PrimaryActorTick.bCanEverTick = true;
 
 	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
+	GetCapsuleComponent()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
+	GetCapsuleComponent()->SetGenerateOverlapEvents(true);
 
+	GetSprite()->SetCollisionResponseToChannel(ECC_GameTraceChannel1, ECR_Overlap);
 	GetSprite()->SetCollisionResponseToChannel(ECC_Camera, ECR_Ignore);
 	GetSprite()->SetRelativeLocation(FVector(0.f, 0.0f, -39.5f));
 	GetSprite()->SetRelativeRotation(FRotator(0.f, -270.f, 0.f));
 	GetSprite()->SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
-	
-	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	CameraBoom->SetupAttachment(GetSprite());
-	CameraBoom->TargetArmLength = 800.0f;
-	CameraBoom->SetRelativeRotation(FRotator(-30.f, -90.f, 0.f));
-	
-	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	FollowCamera->SetupAttachment(CameraBoom);
-	FollowCamera->SetActive(true);
+	GetSprite()->SetGenerateOverlapEvents(true);
 }
 
 void ACharacterBase::BeginPlay()

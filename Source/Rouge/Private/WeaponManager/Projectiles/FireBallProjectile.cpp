@@ -3,32 +3,32 @@
 
 #include "WeaponManager/Projectiles/FireBallProjectile.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "Components/AudioComponent.h"
-#include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Sound/SoundCue.h"
+#include "Components/SphereComponent.h"
+#include "GameFramework/Character.h"
+#include "Components/CapsuleComponent.h"
 
 
 AFireBallProjectile::AFireBallProjectile()
 {
 	PrimaryActorTick.bCanEverTick = false;
 	bReplicates = true;
-
-	CollisionBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollisionBox"));
-	SetRootComponent(CollisionBox);
-	CollisionBox->SetCollisionObjectType(ECC_WorldDynamic);
-	CollisionBox->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	CollisionBox->SetCollisionResponseToAllChannels(ECR_Ignore);
-	CollisionBox->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
-	CollisionBox->SetNotifyRigidBodyCollision(true);
 	
-	CollisionBox->SetBoxExtent(FVector(5, 2.5, 2.5));
-	CollisionBox->SetLineThickness(2.0);
-	CollisionBox->SetVisibility(false);
-	CollisionBox->SetHiddenInGame(false);
-
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SetRootComponent(SphereComponent);
+	SphereComponent->SetCollisionObjectType(ECC_GameTraceChannel1);
+	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+	SphereComponent->SetCollisionResponseToChannel(ECC_WorldStatic, ECR_Block);
+	SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	SphereComponent->SetNotifyRigidBodyCollision(true);
+	
 	ProjectileMovement = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovement"));
 	ProjectileMovement->bRotationFollowsVelocity = true;
 	ProjectileMovement->InitialSpeed = 1500.0f;
@@ -36,7 +36,7 @@ AFireBallProjectile::AFireBallProjectile()
 	ProjectileMovement->ProjectileGravityScale = 0.0f;
 
 	NiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("NiagaraComponent"));
-	NiagaraComponent->SetupAttachment(CollisionBox);
+	NiagaraComponent->SetupAttachment(SphereComponent);
 	NiagaraComponent->SetAutoActivate(true);
 }
 
@@ -44,22 +44,34 @@ void AFireBallProjectile::BeginPlay()
 {
 	Super::BeginPlay();
 
+	const ACharacter* CharacterInstigator = Cast<ACharacter>(GetInstigator());
+	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
+	SphereComponent->IgnoreComponentWhenMoving(CharacterInstigator->GetCapsuleComponent(), true);
 	if (HasAuthority())
 	{
-		CollisionBox->OnComponentHit.AddDynamic(this, &AFireBallProjectile::OnHit);
+		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFireBallProjectile::OnSphereOverlap);
 	}
 	SoundComponent = UGameplayStatics::SpawnSoundAttached(ProjectileSound, NiagaraComponent);
 }
 
-void AFireBallProjectile::OnHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,
-	FVector NormalImpulse, const FHitResult& Hit)
+void AFireBallProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, Hit.ImpactPoint, 1.f);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, Hit.ImpactPoint, FRotator::ZeroRotator, FVector::OneVector, true);
+	if (OtherActor == GetInstigator()) return;
+	
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), 1.f);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, GetActorLocation(), FRotator::ZeroRotator, FVector::OneVector, true);
 	SoundComponent->Stop();
 	
 	if (HasAuthority())
 	{
+		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
+		{
+			if (DamageEffectSpecHandle.Data.IsValid())
+			{
+				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+			}
+		}
 		Destroy();
 	}
 	else
