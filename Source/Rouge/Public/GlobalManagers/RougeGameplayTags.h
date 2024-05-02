@@ -32,6 +32,7 @@ public:
     FGameplayTag InputTag_RMB;
     FGameplayTag InputTag_Jump;
     FGameplayTag InputTag_Sprint;
+	FGameplayTag InputTag_Dash;
 	FGameplayTag InputTag_Equip;
 	FGameplayTag InputTag_1;
 	FGameplayTag InputTag_2;
@@ -83,8 +84,12 @@ public:
 	/** End Effect Tags */
 
 	// Enemy GameplayCue Tags
+	// Static Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
 	FGameplayTag GameplayCue_Ability_Pickup;
+
+	// Loop Tags
+	FGameplayTag GameplayCue_Ability_Pickup_Loop;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */

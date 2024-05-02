@@ -75,12 +75,15 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, Rotation]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, HitLocation]()
 	{
 		FTransform FinishSpawnTransform;
 		const FVector FinishedSocket = WeaponFlipbook->GetSocketLocation("SOCKET_Tip");
+		const FRotator FinishedRotation = (HitLocation - FinishedSocket).Rotation();
+		//FinishedRotation.Pitch = 0.f;
+		
 		FinishSpawnTransform.SetLocation(FinishedSocket);
-		FinishSpawnTransform.SetRotation(Rotation.Quaternion());
+		FinishSpawnTransform.SetRotation(FinishedRotation.Quaternion());
 		//FinishSpawnTransform.SetScale3D(FVector(5.f, 5.f, 5.f));
 		Projectile->FinishSpawning(FinishSpawnTransform);
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);

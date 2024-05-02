@@ -36,6 +36,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("InputTag.Sprint"),
 		FString("Input tag for Sprint")
 		);
+	GameplayTags.InputTag_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.Dash"),
+		FString("Input tag for Dash")
+		);
 	GameplayTags.InputTag_Equip = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("InputTag.Equip"),
 		FString("Input tag for Equip")
@@ -173,6 +177,7 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */
+	// Static Tags
 	GameplayTags.GameplayEvent_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayEvent.Ability.Spell.Cast"),
 		FString("Gameplay Event for Spell Cast Ability")
@@ -180,6 +185,12 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	GameplayTags.GameplayCue_Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.Ability.Pickup"),
 		FString("Gameplay Cue for Ability Pickup")
+		);
+
+	// Loop Tags
+	GameplayTags.GameplayCue_Ability_Pickup_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.Pickup.Loop"),
+		FString("Gameplay Cue for Ability Pickup Loop")
 		);
 	// Enemy Event Tags
 	GameplayTags.Event_Enemy_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(

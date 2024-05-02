@@ -65,10 +65,6 @@ public:
 	/**
 	 * Primary Attributes
 	 */
-	UPROPERTY(ReplicatedUsing = OnRep_Speed, BlueprintReadOnly, Category = "Vital Attributes")
-	FGameplayAttributeData Speed;
-	ATTRIBUTE_ACCESSORS(UAttributeSetBase, Speed);
-
 	UPROPERTY(ReplicatedUsing = OnRep_Strength, BlueprintReadOnly, Category = "Vital Attributes")
 	FGameplayAttributeData Strength;
 	ATTRIBUTE_ACCESSORS(UAttributeSetBase, Strength);
@@ -160,6 +156,14 @@ public:
 	UPROPERTY(BlueprintReadOnly, ReplicatedUsing = OnRep_Mana, Category = "Vital Attributes")
 	FGameplayAttributeData Mana;
 	ATTRIBUTE_ACCESSORS(UAttributeSetBase, Mana);
+
+	UPROPERTY(ReplicatedUsing = OnRep_Speed, BlueprintReadOnly, Category = "Vital Attributes")
+	FGameplayAttributeData Speed;
+	ATTRIBUTE_ACCESSORS(UAttributeSetBase, Speed);
+
+	UPROPERTY(ReplicatedUsing = OnRep_JumpHeight, BlueprintReadOnly, Category = "Vital Attributes")
+	FGameplayAttributeData JumpHeight;
+	ATTRIBUTE_ACCESSORS(UAttributeSetBase, JumpHeight);
 	
 	/**
 	 * Meta Attributes
@@ -179,6 +183,9 @@ public:
 
 	UFUNCTION()
 	void OnRep_Speed(const FGameplayAttributeData& OldSpeed) const;
+
+	UFUNCTION()
+	void OnRep_JumpHeight(const FGameplayAttributeData& OldJumpHeight) const;
 
 	UFUNCTION()
 	void OnRep_Strength(const FGameplayAttributeData& OldStrength) const;

@@ -52,6 +52,7 @@ void UAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, Mana, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, JumpHeight, COND_None, REPNOTIFY_Always);
 }
 
 /** Only used for clamp attributes, this function fires everytime a value gets updated, it's not permanently changed */
@@ -153,12 +154,24 @@ void UAttributeSetBase::PostAttributeChange(const FGameplayAttribute& Attribute,
 			Character->GetCharacterMovement()->MaxWalkSpeed = NewValue;
 		}
 	}
-	
+	if (Attribute == GetJumpHeightAttribute())
+	{
+		AActor* Actor = GetOwningAbilitySystemComponent()->AbilityActorInfo->AvatarActor.Get();
+		if (const ACharacter* Character = Cast<ACharacter>(Actor))
+		{
+			Character->GetCharacterMovement()->JumpZVelocity = NewValue;
+		}
+	}
 }
 
 void UAttributeSetBase::OnRep_Speed(const FGameplayAttributeData& OldSpeed) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAttributeSetBase, Speed, OldSpeed);
+}
+
+void UAttributeSetBase::OnRep_JumpHeight(const FGameplayAttributeData& OldJumpHeight) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UAttributeSetBase, JumpHeight, OldJumpHeight);
 }
 
 void UAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldHealth) const
