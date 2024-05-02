@@ -14,6 +14,7 @@ class ROUGE_API AFireBallProjectile : public AActor
 
 public:
 	AFireBallProjectile();
+	virtual void Destroyed() override;
 	
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
 	
@@ -25,8 +26,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UAudioComponent> SoundComponent;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<UNiagaraSystem> NiagaraImpactFX;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<class USoundCue> ProjectileSound;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class USoundCue> ImpactSound;
 private:
 	UPROPERTY()
 	TObjectPtr<class UBoxComponent> CollisionBox;
+
+	bool bHit;
 };

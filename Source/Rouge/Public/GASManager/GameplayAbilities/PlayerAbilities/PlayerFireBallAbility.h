@@ -20,7 +20,9 @@ public:
 
 private:
 	void GetWeaponAssets();
-
+	
+	UFUNCTION()
+	void OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle);
 	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
 	
 	FGameplayTag WeaponTag;

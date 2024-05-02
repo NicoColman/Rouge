@@ -2,6 +2,9 @@
 
 
 #include "WeaponManager/Projectiles/FireBallProjectile.h"
+
+#include "NiagaraFunctionLibrary.h"
+#include "Components/AudioComponent.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -45,10 +48,33 @@ void AFireBallProjectile::BeginPlay()
 	{
 		CollisionBox->OnComponentHit.AddDynamic(this, &AFireBallProjectile::OnHit);
 	}
-	UGameplayStatics::SpawnSoundAttached(ProjectileSound, NiagaraComponent);
+	SoundComponent = UGameplayStatics::SpawnSoundAttached(ProjectileSound, NiagaraComponent);
 }
 
 void AFireBallProjectile::OnHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp,
 	FVector NormalImpulse, const FHitResult& Hit)
 {
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, Hit.ImpactPoint, 1.f);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, Hit.ImpactPoint, FRotator::ZeroRotator, FVector::OneVector, true);
+	SoundComponent->Stop();
+	
+	if (HasAuthority())
+	{
+		Destroy();
+	}
+	else
+	{
+		bHit = true;
+	}
+}
+
+void AFireBallProjectile::Destroyed()
+{
+	if (!bHit && !HasAuthority())
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), 1.f);
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, GetActorLocation(), FRotator::ZeroRotator, FVector::OneVector, true);
+		SoundComponent->Stop();
+	}
+	Super::Destroyed();
 }
