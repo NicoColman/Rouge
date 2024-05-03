@@ -95,6 +95,21 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		);
 	/** End Player State Tags */
 
+	/** Begin Effect Tags */
+	GameplayTags.EffectTag_JumpBoost = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EffectTag.JumpBoost"),
+		FString("Effect tag for Jump Boost")
+		);
+	GameplayTags.EffectTag_VelocityBoost = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EffectTag.VelocityBoost"),
+		FString("Effect tag for Velocity Boost")
+		);
+	GameplayTags.EffectTag_Regeneration = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("EffectTag.Regeneration"),
+		FString("Effect tag for Regeneration")
+		);
+	/** End Effect Tags */
+
 	/** Begin WeaponType Tags*/
 	GameplayTags.WeaponType = UGameplayTagsManager::Get().AddNativeGameplayTag(
 	FName("WeaponType"),
@@ -181,10 +196,22 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	FName("GameplayCue.Ability.Base"),
 	FString("Gameplay Cue for Ability Base")
 	);
+	GameplayTags.GameplayCue_Effect_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Effect.Health"),
+		FString("Gameplay Cue for Health Effect")
+		);
+	GameplayTags.GameplayCue_Effect_Mana = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Effect.Mana"),
+		FString("Gameplay Cue for Mana Effect")
+		);
 	// Loop Tags
 	GameplayTags.GameplayCue_Ability_Pickup_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.Ability.Pickup.Loop"),
 		FString("Gameplay Cue for Ability Pickup Loop")
+		);
+	GameplayTags.GameplayCue_Ability_Regeneration_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.Regeneration.Loop"),
+		FString("Gameplay Cue for Ability Regeneration Loop")
 		);
 	/** End GameplayCue Tags */
 

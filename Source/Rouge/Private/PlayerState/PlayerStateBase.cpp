@@ -9,6 +9,8 @@
 
 APlayerStateBase::APlayerStateBase()
 {
+	NetUpdateFrequency = 100.f;
+	
 	AbilitySystemComponent = CreateDefaultSubobject<UASCBase>(TEXT("AbilitySystemComponent"));
 	AbilitySystemComponent->SetIsReplicated(true);
 	AbilitySystemComponent->SetReplicationMode(EGameplayEffectReplicationMode::Mixed);

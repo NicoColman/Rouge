@@ -6,6 +6,7 @@
 #include "GameplayEffect.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "CoreUtilites/RougeLibrary.h"
 #include "EffectActorBaseDataAsset.generated.h"
 
 UENUM(BlueprintType)
@@ -34,7 +35,6 @@ enum class EEffectRemovalPolicy : uint8
 	EERP_DoNotRemove UMETA(DisplayName = "Do Not Remove"),
 };
 
-
 /**
  * 
  */
@@ -60,6 +60,9 @@ public:
 	TObjectPtr<UObject> EffectActorObject;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	EFlipbookRotation FlipbookRotation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	bool bUseSphereOverlap;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
@@ -77,6 +80,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	TSubclassOf<class UGameplayEffect> EffectToApply;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	bool bDestroyOnEffectApplied;
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	bool bDestroyOnEffectRemoval;
 

@@ -45,7 +45,7 @@ void AEffectActorBase::BeginPlay()
 	ActorLevel = EffectActorDataAsset->ActorLevel;
 
 	const FVector NewScale = FVector(1.f, 1.f, 1.f) * EffectActorDataAsset->ActorScale;
-
+	const FRotator NewRotation = URougeLibrary::GetFlipbookRotation(EffectActorDataAsset->FlipbookRotation);
 	switch (ObjectType)
 	{
 	case EObjectType::EOT_None:
@@ -70,7 +70,7 @@ void AEffectActorBase::BeginPlay()
 			UPaperFlipbook* Flipbook = Cast<UPaperFlipbook>(EffectActorDataAsset->EffectActorObject);
 			FlipbookActor = CreateSpecificActorComponent<UPaperFlipbookComponent>(Flipbook);
 			FlipbookActor->SetRelativeScale3D(NewScale);
-			FlipbookActor->SetRelativeRotation(FRotator(0.f, -90.f, 0.f));
+			FlipbookActor->SetRelativeRotation(NewRotation);
 		}
 	default:
 		break;
@@ -101,12 +101,20 @@ void AEffectActorBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	OnEffectOverlap(OtherActor);
+	if (EffectActorDataAsset->bDestroyOnEffectApplied)
+	{
+		Destroy();
+	}
 }
 
 void AEffectActorBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	OnEffectEndOverlap(OtherActor);
+	if (EffectActorDataAsset->bDestroyOnEffectRemoval)
+	{
+		Destroy();
+	}
 }
 
 void AEffectActorBase::OnEffectOverlap(AActor* TargetActor)
