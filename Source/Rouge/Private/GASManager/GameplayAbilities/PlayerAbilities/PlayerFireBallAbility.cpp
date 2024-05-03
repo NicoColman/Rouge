@@ -43,13 +43,8 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	
 	const FVector HitLocation = HitData.Location;
 	const FVector Socket = WeaponFlipbook->GetSocketLocation("SOCKET_Tip");
-
-	FRotator Rotation = (HitLocation - Socket).Rotation();
-	Rotation.Pitch = 0.f;
 	
 	FTransform SpawnTransform;
-	SpawnTransform.SetLocation(Socket);
-	SpawnTransform.SetRotation(Rotation.Quaternion());
 
 	AFireBallProjectile* Projectile = GetWorld()->SpawnActorDeferred<AFireBallProjectile>(
 		ProjectileClass,
@@ -80,10 +75,12 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 		FTransform FinishSpawnTransform;
 		const FVector FinishedSocket = WeaponFlipbook->GetSocketLocation("SOCKET_Tip");
 		const FRotator FinishedRotation = (HitLocation - FinishedSocket).Rotation();
+		const FRotator FinishedModifyPitch = FinishedRotation + FRotator(1.5f, 0.f, 0.f);
+
 		//FinishedRotation.Pitch = 0.f;
 		
 		FinishSpawnTransform.SetLocation(FinishedSocket);
-		FinishSpawnTransform.SetRotation(FinishedRotation.Quaternion());
+		FinishSpawnTransform.SetRotation(FinishedModifyPitch.Quaternion());
 		//FinishSpawnTransform.SetScale3D(FVector(5.f, 5.f, 5.f));
 		Projectile->FinishSpawning(FinishSpawnTransform);
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
