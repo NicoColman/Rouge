@@ -52,6 +52,12 @@ public:
 	FGameplayTag StateTag_Player_Dashing;
 	/** End Player State Tags */
 
+	/** Begin Effect Tags */
+	FGameplayTag EffectTag_JumpBoost;
+	FGameplayTag EffectTag_VelocityBoost;
+	FGameplayTag EffectTag_Regeneration;
+	/** End Effect Tags */
+
     /** Begin WeaponType Tags*/
 	FGameplayTag WeaponType;
 	FGameplayTag WeaponType_Proxy;
@@ -87,9 +93,12 @@ public:
 	// Static Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
 	FGameplayTag GameplayCue_Ability_Base;
+	FGameplayTag GameplayCue_Effect_Health;
+	FGameplayTag GameplayCue_Effect_Mana;
 
 	// Loop Tags
 	FGameplayTag GameplayCue_Ability_Pickup_Loop;
+	FGameplayTag GameplayCue_Ability_Regeneration_Loop;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */

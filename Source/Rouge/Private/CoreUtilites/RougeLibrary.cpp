@@ -36,3 +36,20 @@ FPrimaryAssetId URougeLibrary::GetPrimaryAssetIdFromTag(const FGameplayTag& Tag,
 	const FString AssetName = Tag.GetTagName().ToString();
 	return FPrimaryAssetId(FPrimaryAssetType(InName), FName(*AssetName));
 }
+
+FRotator URougeLibrary::GetFlipbookRotation(EFlipbookRotation FlipbookRotation)
+{
+	switch (FlipbookRotation)
+	{
+	case EFlipbookRotation::EFR_North:
+		return FRotator(0, 0, 0);
+	case EFlipbookRotation::EFR_South:
+		return FRotator(0, 180, 0);
+	case EFlipbookRotation::EFR_East:
+		return FRotator(0, 90, 0);
+	case EFlipbookRotation::EFR_West:
+		return FRotator(0, -90, 0);
+	default:
+		return FRotator::ZeroRotator;
+	}
+}

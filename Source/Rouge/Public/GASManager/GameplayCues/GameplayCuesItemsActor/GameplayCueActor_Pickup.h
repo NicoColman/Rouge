@@ -15,11 +15,15 @@ class ROUGE_API AGameplayCueActor_Pickup : public AGameplayCueNotify_Actor
 	GENERATED_BODY()
 
 public:
-	bool OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
-
+	virtual bool OnActive_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
+	virtual bool OnRemove_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) override;
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class UNiagaraSystem> PickupParticles;
 	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<class USoundCue> PickupSound;
+
+private:
+	TObjectPtr<class UNiagaraComponent> SpawnedParticles;
+	TObjectPtr<class UAudioComponent> SpawnedSound;
 };
