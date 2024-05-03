@@ -16,6 +16,12 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	FGameplayCueParameters CueParams;
+	FGameplayTagContainer SourceTags;
+	SourceTags.AddTag(FRougeGameplayTags::Get().Ability_Pickup);
+	CueParams.AggregatedSourceTags = SourceTags;
+	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Base, CueParams);
+	
 	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	if (ActorInfo->AvatarActor.Get()->HasAuthority())
 	{
@@ -26,9 +32,6 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 			EffectActor->SetActorLocation(FVector::ZeroVector);
 		}
 	}
-	FGameplayCueParameters CueParams;
-	CueParams.Location = ActorInfo->AvatarActor.Get()->GetActorLocation();
-	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Pickup, CueParams);
 	EndAbility(Handle, ActorInfo, ActivationInfo, true, false);
 }
 

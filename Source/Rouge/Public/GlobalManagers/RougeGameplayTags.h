@@ -45,12 +45,12 @@ public:
 	FGameplayTag Player_Block_InputHeld;
 	/** End Input Block Tags */
 	
-	/**
-	 * Player State Tags 
-	 */
+	/** Begin Player State Tags */
     FGameplayTag StateTag_Player_Jumping;
     FGameplayTag StateTag_Player_Sprinting;
     FGameplayTag StateTag_Player_AbleEquip;
+	FGameplayTag StateTag_Player_Dashing;
+	/** End Player State Tags */
 
     /** Begin WeaponType Tags*/
 	FGameplayTag WeaponType;
@@ -70,14 +70,14 @@ public:
 	FGameplayTag WeaponType_Melee;
 	/** End WeaponType Tags*/
 
-	/** Begin Montages Tags */
-	FGameplayTag MontageTag_Melee_Attack;
-	FGameplayTag MontageTag_Melee_AttackEnd;
-	/** End Montages Tags */
-
 	/** Begin Damage Tags */
 	FGameplayTag Damage;
 	/** End Damage Tags */
+
+	/** Begin Abilities Tags*/
+	FGameplayTag Ability_Dash;
+	FGameplayTag Ability_Pickup;
+	/** End Abilities Tags */
 
 	/** Begin Effect Tags */
 	FGameplayTag Effect_HitReact;
@@ -86,7 +86,7 @@ public:
 	// Enemy GameplayCue Tags
 	// Static Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
-	FGameplayTag GameplayCue_Ability_Pickup;
+	FGameplayTag GameplayCue_Ability_Base;
 
 	// Loop Tags
 	FGameplayTag GameplayCue_Ability_Pickup_Loop;

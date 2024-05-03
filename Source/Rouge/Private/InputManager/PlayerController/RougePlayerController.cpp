@@ -9,10 +9,17 @@
 #include "AbilitySystemComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
+#include "Net/UnrealNetwork.h"
 
 ARougePlayerController::ARougePlayerController()
 {
 	AbilityInterface = nullptr;
+}
+
+void ARougePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+	DOREPLIFETIME(ARougePlayerController, Directionality);
 }
 
 void ARougePlayerController::BeginPlay()
@@ -89,6 +96,12 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
+	ServerMove(InputAxisVector);
+}
+
+void ARougePlayerController::ServerMove_Implementation(const FVector2D& Direction)
+{
+	Directionality = FVector2D(Direction.Y, Direction.X);
 }
 
 UAbilitySystemComponent* ARougePlayerController::GetASC()

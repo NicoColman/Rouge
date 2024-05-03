@@ -18,6 +18,10 @@ class ROUGE_API ARougePlayerController : public APlayerController
 
 public:
 	ARougePlayerController();
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(Replicated)
+	FVector2D Directionality;
 
 protected:
 	virtual void BeginPlay() override;
@@ -33,6 +37,8 @@ private:
 	TObjectPtr<class UInputAction> MoveAction;
 	
 	void Move(const FInputActionValue& InputActionValue);
+	UFUNCTION(Server, Reliable)
+	void ServerMove(const FVector2D& Direction);
 	
 	/** Data Asset */
 	UPROPERTY(EditAnywhere, Category="DataAsset")

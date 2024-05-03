@@ -76,9 +76,7 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		);
 	/** End Input Block Tags */
 	
-	/**
-	 * Player State Tags
-	 */
+	/** Begin Player State Tags */
 	GameplayTags.StateTag_Player_Jumping = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("StateTag.Player.Jumping"),
 		FString("State tag for Jumping")
@@ -91,6 +89,11 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("StateTag.Player.AbleEquip"),
 		FString("State tag for Able Equip")
 		);
+	GameplayTags.StateTag_Player_Dashing = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("StateTag.Player.Dashing"),
+		FString("State tag for Dashing")
+		);
+	/** End Player State Tags */
 
 	/** Begin WeaponType Tags*/
 	GameplayTags.WeaponType = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -142,17 +145,6 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FString("Weapon Type Melee")
 		);
 	/** End WeaponType Tags*/
-	
-	/** Begin Montages Tags */
-	GameplayTags.MontageTag_Melee_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("MontageTag.Melee.Attack"),
-		FString("Montage Tag Melee Attack")
-		);
-	GameplayTags.MontageTag_Melee_AttackEnd = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("MontageTag.Melee.AttackEnd"),
-		FString("Montage Tag Melee Attack End")
-		);
-	/** End Montages Tags */
 
 	/** Begin Damage Tags */
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -160,6 +152,17 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FString("Damage")
 		);
 	/** End Damage Tags */
+
+	/** Begin Abilities Tags*/
+	GameplayTags.Ability_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Dash"),
+		FString("Ability Dash")
+		);
+	GameplayTags.Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Pickup"),
+		FString("Ability Pickup")
+		);
+	/** End Abilities Tags */
 
 	/** Begin Effect Tags */
 	GameplayTags.Effect_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -169,29 +172,28 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	/** End Effect Tags */
 
 	/** Begin GameplayCue Tags */
-	// Player GameplayCue Tags
+	// Static Tags
 	GameplayTags.GameplayCue_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.Ability.Spell.Cast"),
 		FString("Gameplay Cue for Spell Cast Ability")
 		);
-	/** End GameplayCue Tags */
-
-	/** Begin Event Tags */
-	// Static Tags
-	GameplayTags.GameplayEvent_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("GameplayEvent.Ability.Spell.Cast"),
-		FString("Gameplay Event for Spell Cast Ability")
-		);
-	GameplayTags.GameplayCue_Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("GameplayCue.Ability.Pickup"),
-		FString("Gameplay Cue for Ability Pickup")
-		);
-
+	GameplayTags.GameplayCue_Ability_Base = UGameplayTagsManager::Get().AddNativeGameplayTag(
+	FName("GameplayCue.Ability.Base"),
+	FString("Gameplay Cue for Ability Base")
+	);
 	// Loop Tags
 	GameplayTags.GameplayCue_Ability_Pickup_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.Ability.Pickup.Loop"),
 		FString("Gameplay Cue for Ability Pickup Loop")
 		);
+	/** End GameplayCue Tags */
+
+	/** Begin Event Tags */
+	GameplayTags.GameplayEvent_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayEvent.Ability.Spell.Cast"),
+		FString("Gameplay Event for Spell Cast Ability")
+		);
+	
 	// Enemy Event Tags
 	GameplayTags.Event_Enemy_HitReact = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Event.Enemy.HitReact"),

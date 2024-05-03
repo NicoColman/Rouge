@@ -11,16 +11,7 @@ void UPlayerSprintAbility::ActivateAbility(const FGameplayAbilitySpecHandle Hand
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	if (!GetAvatarActorFromActorInfo()->HasAuthority() || !SpeedBoostEffectClass) return;
 
-	UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	ActiveEffectHandle = BP_ApplyGameplayEffectToOwner(SpeedBoostEffectClass, 1, 1);
-
-	/*
-	IPlayerMovementCpInterface* PlayerMovementCpInterface = Cast<IPlayerMovementCpInterface>(GetActorInfo().MovementComponent.Get());
-	if (PlayerMovementCpInterface)
-	{
-		PlayerMovementCpInterface->SetSprint(true);
-	}
-	*/
 }
 
 void UPlayerSprintAbility::InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo,
@@ -35,11 +26,6 @@ void UPlayerSprintAbility::EndAbility(const FGameplayAbilitySpecHandle Handle, c
 	const FGameplayAbilityActivationInfo ActivationInfo, bool bReplicateEndAbility, bool bWasCancelled)
 {
 	BP_RemoveGameplayEffectFromOwnerWithHandle(ActiveEffectHandle, -1);
-	//IPlayerMovementCpInterface* PlayerMovementCpInterface = Cast<IPlayerMovementCpInterface>(GetActorInfo().MovementComponent.Get());
-	//if (PlayerMovementCpInterface)
-	//{
-	//	PlayerMovementCpInterface->SetSprint(false);
-	//}
 	Super::EndAbility(Handle, ActorInfo, ActivationInfo, bReplicateEndAbility, bWasCancelled);
 }
 

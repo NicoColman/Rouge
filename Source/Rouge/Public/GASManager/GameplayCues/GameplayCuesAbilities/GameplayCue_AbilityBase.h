@@ -4,13 +4,14 @@
 
 #include "CoreMinimal.h"
 #include "GameplayCueNotify_Static.h"
-#include "GameplayCue_Pickup.generated.h"
+#include "CoreUtilites/RougeWeaponUtilities.h"
+#include "GameplayCue_AbilityBase.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class ROUGE_API UGameplayCue_Pickup : public UGameplayCueNotify_Static
+class ROUGE_API UGameplayCue_AbilityBase : public UGameplayCueNotify_Static
 {
 	GENERATED_BODY()
 
@@ -19,8 +20,5 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<class UNiagaraSystem> PickupParticles;
-	
-	UPROPERTY(EditDefaultsOnly)
-	TObjectPtr<class USoundCue> PickupSound;
+	TMap<FGameplayTag, FAbilityBaseCues> AbilityEffects;
 };
