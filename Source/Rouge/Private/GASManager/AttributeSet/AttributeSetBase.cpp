@@ -10,6 +10,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/GameModeBase.h"
 #include "GlobalManagers/RougeGameplayTags.h"
+#include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
 
 UAttributeSetBase::UAttributeSetBase()
 {
@@ -89,13 +90,11 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		const bool bFatal = NewHealth <= 0.f;
 		if (bFatal)
 		{
-			/*
-			IGameModeInterface* GameMode = Cast<IGameModeInterface>(GetWorld()->GetAuthGameMode());
-			if (GameMode)
+			Props.TargetCharacter->Destroy();
+			if (IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode()))
 			{
-				GameMode->ReturnZombieToPool(Props.TargetCharacter);
+				GameMode->RequestRespawn(Props.TargetController);
 			}
-			*/
 		}
 		else
 		{

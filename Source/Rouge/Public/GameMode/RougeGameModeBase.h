@@ -21,6 +21,7 @@ public:
 	/** Begin IRougeGameModeInterface */
 	virtual AActor* GetWeaponFromPool(const FGameplayTag& WeaponTag) override;
 	virtual void ReturnWeaponToPool(AActor* Weapon) override;
+	virtual void RequestRespawn(APlayerController* PlayerController) override;
 	/** End IRougeGameModeInterface */
 
 protected:

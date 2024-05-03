@@ -44,7 +44,7 @@ struct FEffectProperties
 	ACharacter* TargetCharacter = nullptr;
 
 	UPROPERTY()
-	AController* TargetController = nullptr;
+	APlayerController* TargetController = nullptr;
 };
 
 /**

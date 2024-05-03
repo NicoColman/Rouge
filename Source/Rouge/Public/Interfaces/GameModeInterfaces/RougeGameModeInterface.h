@@ -24,4 +24,5 @@ class ROUGE_API IRougeGameModeInterface
 public:
 	virtual AActor* GetWeaponFromPool(const FGameplayTag& WeaponTag) = 0;
 	virtual void ReturnWeaponToPool(AActor* Weapon) = 0;
+	virtual void RequestRespawn(APlayerController* PlayerController) = 0;
 };

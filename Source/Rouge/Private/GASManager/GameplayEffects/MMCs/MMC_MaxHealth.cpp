@@ -28,8 +28,11 @@ float UMMC_MaxHealth::CalculateBaseMagnitude_Implementation(const FGameplayEffec
 	GetCapturedAttributeMagnitude(VigorDef, Spec, EvaluationParameters, Vigor);
 	Vigor = FMath::Max<float>(Vigor, 0.f);
 
-	ICharacterBaseInterface* TargetCharacter = Cast<ICharacterBaseInterface>(Spec.GetContext().GetSourceObject());
-	const int32 PlayerLevel = TargetCharacter->GetCharacterLevel();
+	int32 PlayerLevel = 1;
+	if (const ICharacterBaseInterface* TargetCharacter = Cast<ICharacterBaseInterface>(Spec.GetContext().GetSourceObject()))
+	{
+		PlayerLevel = TargetCharacter->GetCharacterLevel();
+	}
 
 	return 80.f + Vigor * 2.5f + PlayerLevel * 12.f;
 }
