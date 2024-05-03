@@ -28,14 +28,13 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 {
 	const FGameplayTag NewWeaponTag = GameplayTags.GetMatchTagFromASC(GetAbilitySystemComponentFromActorInfo(), "WeaponType.Staff.Red");
 	
-
 	if (const UWeaponBaseDataAsset* WeaponDataAsset = Cast<UWeaponBaseDataAsset>(URougeLibrary::GetPrimaryObjectFromTag(NewWeaponTag, "Weapon")))
 	{
 		WeaponTag = NewWeaponTag;
 		WeaponFlipbook = WeaponDataAsset->WeaponFlipbookComponent;
 		ProjectileClass = WeaponDataAsset->Projectile.Get();
+		DamageEffectClass = WeaponDataAsset->DamageEffectClass;
 	}
-
 }
 
 void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
@@ -60,21 +59,43 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 		);
 
+	APawn* AvatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
+	Projectile->SetInstigator(AvatarPawn);
+	Projectile->SetOwner(AvatarPawn);
+
+	ApplyDamageEffect(Projectile);
+
 	FGameplayCueParameters CueParams;
 	CueParams.Location = Socket;
 	CueParams.TargetAttachComponent = WeaponFlipbook;
 	FGameplayTagContainer SourceTags;
 	SourceTags.AddTag(WeaponTag);
 	CueParams.AggregatedSourceTags = SourceTags;
+	CueParams.AbilityLevel = 1.f;
 	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, Rotation, Socket]()
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, HitLocation]()
 	{
 		FTransform FinishSpawnTransform;
-		FinishSpawnTransform.SetLocation(Socket);
-		FinishSpawnTransform.SetRotation(Rotation.Quaternion());
+		const FVector FinishedSocket = WeaponFlipbook->GetSocketLocation("SOCKET_Tip");
+		const FRotator FinishedRotation = (HitLocation - FinishedSocket).Rotation();
+		//FinishedRotation.Pitch = 0.f;
+		
+		FinishSpawnTransform.SetLocation(FinishedSocket);
+		FinishSpawnTransform.SetRotation(FinishedRotation.Quaternion());
+		//FinishSpawnTransform.SetScale3D(FVector(5.f, 5.f, 5.f));
 		Projectile->FinishSpawning(FinishSpawnTransform);
 		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
 	}, 0.6f, false);
+}
+
+void UPlayerFireBallAbility::ApplyDamageEffect(AFireBallProjectile* SpawningProjectile) const
+{
+	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	const FGameplayEffectSpecHandle DamageEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
+
+	const float ScaleDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTags.Damage, ScaleDamage);
+	SpawningProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 }

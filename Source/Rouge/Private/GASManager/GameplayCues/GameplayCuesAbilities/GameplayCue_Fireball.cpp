@@ -14,17 +14,17 @@ UGameplayCue_SpellCast::UGameplayCue_SpellCast()
 bool UGameplayCue_SpellCast::OnExecute_Implementation(AActor* MyTarget, const FGameplayCueParameters& Parameters) const
 {
 	const FGameplayTag Tag = Parameters.AggregatedSourceTags.First();
-	FCastEffect CurrentWeaponCast;
+	FAbilityBaseCues CurrentWeaponCast;
 	CurrentWeaponCast.CastParticles = CastEffects.FindRef(Tag).CastParticles;
 	CurrentWeaponCast.CastSound = CastEffects.FindRef(Tag).CastSound;
-
+	
 	USceneComponent* TargetComponent = Parameters.TargetAttachComponent.Get();
 	UNiagaraFunctionLibrary::SpawnSystemAttached(
 		CurrentWeaponCast.CastParticles,
 		TargetComponent, FName("SOCKET_Tip"),
 		FVector::ZeroVector,
 		FRotator::ZeroRotator,
-		FVector::OneVector,
+		FVector::OneVector * Parameters.AbilityLevel,
 		EAttachLocation::SnapToTarget,
 		true,
 		ENCPoolMethod::None,

@@ -6,10 +6,22 @@
 #include "AbilitySystemComponent.h"
 #include "GameFramework/PlayerState.h"
 #include "PlayerState/PlayerStateBase.h"
+#include "GameFramework/SpringArmComponent.h"
+#include "Camera/CameraComponent.h"
+#include "PaperFlipbookComponent.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
+
+	CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
+	CameraBoom->SetupAttachment(GetSprite());
+	CameraBoom->TargetArmLength = 800.0f;
+	CameraBoom->SetRelativeRotation(FRotator(-30.f, -90.f, 0.f));
+	
+	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
+	FollowCamera->SetupAttachment(CameraBoom);
+	FollowCamera->SetActive(true);
 }
 
 void ACharacterPlayer::Tick(float DeltaTime)

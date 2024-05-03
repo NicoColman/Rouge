@@ -16,6 +16,12 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	FGameplayCueParameters CueParams;
+	FGameplayTagContainer SourceTags;
+	SourceTags.AddTag(FRougeGameplayTags::Get().Ability_Pickup);
+	CueParams.AggregatedSourceTags = SourceTags;
+	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Base, CueParams);
+	
 	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
 	if (ActorInfo->AvatarActor.Get()->HasAuthority())
 	{

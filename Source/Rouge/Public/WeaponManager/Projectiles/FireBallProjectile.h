@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "NiagaraComponent.h"
+#include "GameplayEffectTypes.h"
 #include "FireBallProjectile.generated.h"
 
 UCLASS()
@@ -17,12 +18,16 @@ public:
 	virtual void Destroyed() override;
 	
 	TObjectPtr<class UProjectileMovementComponent> ProjectileMovement;
-	
+	FGameplayEffectSpecHandle DamageEffectSpecHandle;
+
+	UFUNCTION()
+	virtual void OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TObjectPtr<class USphereComponent> SphereComponent;
 protected:
 	virtual void BeginPlay() override;
-	UFUNCTION()
-	virtual void OnHit(UPrimitiveComponent* MyComp, AActor* Other, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	TObjectPtr<UNiagaraComponent> NiagaraComponent;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)

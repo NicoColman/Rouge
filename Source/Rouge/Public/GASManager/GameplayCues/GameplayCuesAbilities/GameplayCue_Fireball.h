@@ -4,18 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "GameplayCueNotify_Static.h"
+#include "CoreUtilites/RougeWeaponUtilities.h"
 #include "GameplayCue_Fireball.generated.h"
 
-USTRUCT()
-struct FCastEffect
-{
-	GENERATED_BODY()
-
-	UPROPERTY(EditDefaultsOnly, Category = "GameplayCue")
-	TObjectPtr<class USoundCue> CastSound;
-	UPROPERTY(EditDefaultsOnly, Category = "GameplayCue")
-	TObjectPtr<class UNiagaraSystem> CastParticles;
-};
 
 /**
  * 
@@ -31,5 +22,5 @@ public:
 
 protected:
 	UPROPERTY(EditDefaultsOnly)
-	TMap<FGameplayTag, FCastEffect> CastEffects;
+	TMap<FGameplayTag, FAbilityBaseCues> CastEffects;
 };
