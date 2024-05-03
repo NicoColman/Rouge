@@ -45,12 +45,16 @@ public:
 	FGameplayTag Player_Block_InputHeld;
 	/** End Input Block Tags */
 	
-	/** Begin Player State Tags */
+	/** Begin State Tags */
+	// Character State Tags
+	FGameplayTag StateTag_Character_Shocked;
+	
+	// Player State Tags
     FGameplayTag StateTag_Player_Jumping;
     FGameplayTag StateTag_Player_Sprinting;
     FGameplayTag StateTag_Player_AbleEquip;
 	FGameplayTag StateTag_Player_Dashing;
-	/** End Player State Tags */
+	/** End State Tags */
 
 	/** Begin Effect Tags */
 	FGameplayTag EffectTag_JumpBoost;
@@ -83,6 +87,7 @@ public:
 	/** Begin Abilities Tags*/
 	FGameplayTag Ability_Dash;
 	FGameplayTag Ability_Pickup;
+	FGameplayTag Ability_Shockwave;
 	/** End Abilities Tags */
 
 	/** Begin Effect Tags */

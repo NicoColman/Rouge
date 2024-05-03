@@ -76,7 +76,14 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		);
 	/** End Input Block Tags */
 	
-	/** Begin Player State Tags */
+	/** Begin State Tags */
+	// Character State Tags
+	GameplayTags.StateTag_Character_Shocked = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("StateTag.Character.Shocked"),
+		FString("State tag for Shocked")
+		);
+	
+	// Player State Tags
 	GameplayTags.StateTag_Player_Jumping = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("StateTag.Player.Jumping"),
 		FString("State tag for Jumping")
@@ -93,7 +100,7 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("StateTag.Player.Dashing"),
 		FString("State tag for Dashing")
 		);
-	/** End Player State Tags */
+	/** End State Tags */
 
 	/** Begin Effect Tags */
 	GameplayTags.EffectTag_JumpBoost = UGameplayTagsManager::Get().AddNativeGameplayTag(
@@ -176,6 +183,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 	GameplayTags.Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Ability.Pickup"),
 		FString("Ability Pickup")
+		);
+	GameplayTags.Ability_Shockwave = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Shockwave"),
+		FString("Ability Shockwave")
 		);
 	/** End Abilities Tags */
 

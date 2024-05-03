@@ -44,11 +44,11 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	const FVector HitLocation = HitData.Location;
 	const FVector Socket = WeaponFlipbook->GetSocketLocation("SOCKET_Tip");
 	
-	FTransform SpawnTransform;
+	//const FTransform SpawnTransform;
 
 	AFireBallProjectile* Projectile = GetWorld()->SpawnActorDeferred<AFireBallProjectile>(
 		ProjectileClass,
-		SpawnTransform,
+		FTransform(),
 		GetOwningActorFromActorInfo(),
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
