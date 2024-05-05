@@ -14,14 +14,16 @@ void UPlayerShockWaveAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 
+	FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	
 	TArray<FHitResult> HitResults;
 	GetWorld()->SweepMultiByProfile(
 		HitResults,
-		ActorInfo->OwnerActor->GetActorLocation(),
-		ActorInfo->OwnerActor->GetActorLocation() + FVector(0, 0, -1000),
+		StartLocation,
+		StartLocation + FVector(0, 0, -1000),
 		FQuat::Identity,
-		FName(),
-		FCollisionShape::MakeSphere(500),
+		FName(),	
+		FCollisionShape::MakeSphere(GetSphereRadius()),
 		FCollisionQueryParams()
 		);
 
@@ -59,5 +61,26 @@ void UPlayerShockWaveAbility::ApplyStunEffect(AActor* HitActor) const
 		const FGameplayEffectSpecHandle StunEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(StunEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
 
 		TargetAsc->ApplyGameplayEffectSpecToSelf(*StunEffectSpecHandle.Data.Get());
+	}
+}
+
+float UPlayerShockWaveAbility::GetSphereRadius() const
+{
+	switch (GetAbilityLevel())
+	{
+	case 1:
+		return 250.f;
+	case 2:
+		return 300.f;
+	case 3:
+		return 350.f;
+	case 4:
+		return 400.f;
+	case 5:
+		return 450.f;
+	case 6:
+		return 500.f;
+	default:
+		return 250.f;
 	}
 }

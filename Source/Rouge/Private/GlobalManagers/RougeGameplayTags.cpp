@@ -216,13 +216,17 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FString("Gameplay Cue for Mana Effect")
 		);
 	// Loop Tags
-	GameplayTags.GameplayCue_Ability_Pickup_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("GameplayCue.Ability.Pickup.Loop"),
+	GameplayTags.GameplayCue_Ability_PickupLoop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.PickupLoop"),
 		FString("Gameplay Cue for Ability Pickup Loop")
 		);
-	GameplayTags.GameplayCue_Ability_Regeneration_Loop = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("GameplayCue.Ability.Regeneration.Loop"),
+	GameplayTags.GameplayCue_Ability_RegenerationLoop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.RegenerationLoop"),
 		FString("Gameplay Cue for Ability Regeneration Loop")
+		);
+	GameplayTags.GameplayCue_Ability_ShockedLoop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.ShockedLoop"),
+		FString("Gameplay Cue for Ability Shocked Loop")
 		);
 	/** End GameplayCue Tags */
 
