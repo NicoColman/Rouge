@@ -24,5 +24,6 @@ protected:
 	TSubclassOf<UGameplayEffect> StunEffectClass;
 
 	void ApplyDamageEffect(AActor* HitActor) const;
-	void ApplyStunEffect(AActor* HitActor) const;
+	void ApplyStunEffect(AActor* HitActor) const;\
+	float GetSphereRadius() const;
 };

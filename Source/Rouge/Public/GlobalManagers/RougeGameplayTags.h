@@ -102,8 +102,9 @@ public:
 	FGameplayTag GameplayCue_Effect_Mana;
 
 	// Loop Tags
-	FGameplayTag GameplayCue_Ability_Pickup_Loop;
-	FGameplayTag GameplayCue_Ability_Regeneration_Loop;
+	FGameplayTag GameplayCue_Ability_PickupLoop;
+	FGameplayTag GameplayCue_Ability_RegenerationLoop;
+	FGameplayTag GameplayCue_Ability_ShockedLoop;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */
