@@ -23,6 +23,7 @@ public:
 	/** Begin ICharacterBaseInterface */
 	virtual int32 GetCharacterLevel() const override;
 	virtual void SetPlayerWeapon(class AActor* Weapon) override;
+	virtual UCharacterBaseDataAsset* GetCharacterDataAsset() const override {return CharacterDataAsset;}
 	/** End ICharacterBaseInterface */
 
 protected:

@@ -24,4 +24,5 @@ class ROUGE_API ICharacterBaseInterface
 public:
 	virtual int32 GetCharacterLevel() const = 0;
 	virtual void SetPlayerWeapon(class AActor* Weapon) = 0;
+	virtual class UCharacterBaseDataAsset* GetCharacterDataAsset() const = 0;
 };

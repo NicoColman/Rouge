@@ -30,5 +30,5 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TSubclassOf<UGameplayEffect> VitalAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
-	TSubclassOf<UGameplayEffect> DamageAttributeEffect;
+	TObjectPtr<UCurveTable> DamageCalculationsCoefficients;
 };

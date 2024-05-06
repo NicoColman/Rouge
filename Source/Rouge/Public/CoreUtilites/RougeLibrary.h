@@ -31,7 +31,8 @@ public:
 	static UObject* GetPrimaryObjectFromTag(const FGameplayTag& Tag, const ANSICHAR* InName);
 
 	static FRotator GetFlipbookRotation(EFlipbookRotation FlipbookRotation);
-
+	
+	static class UCharacterBaseDataAsset* GetCharacterBaseDataAsset(AActor* Actor);
 
 private:
 	static FPrimaryAssetId GetPrimaryAssetIdFromTag(const FGameplayTag& Tag, const ANSICHAR* InName);
