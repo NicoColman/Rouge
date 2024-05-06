@@ -3,6 +3,7 @@
 
 #include "CoreUtilites/RougeLibrary.h"
 #include "GlobalManagers/RougeAssetManager.h"
+#include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
 
 URougeLibrary::URougeLibrary()
 {
@@ -52,4 +53,13 @@ FRotator URougeLibrary::GetFlipbookRotation(EFlipbookRotation FlipbookRotation)
 	default:
 		return FRotator::ZeroRotator;
 	}
+}
+
+UCharacterBaseDataAsset* URougeLibrary::GetCharacterBaseDataAsset(AActor* Actor)
+{
+	if (const ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(Actor))
+	{
+		return CharacterInterface->GetCharacterDataAsset();
+	}
+	return nullptr;
 }

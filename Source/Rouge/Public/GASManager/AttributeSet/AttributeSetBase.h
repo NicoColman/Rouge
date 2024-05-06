@@ -242,6 +242,6 @@ public:
 	void OnRep_PhysicalResistance(const FGameplayAttributeData& OldPhysicalResistance) const;
 	
 private:
-	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, struct FEffectProperties& Props);
+	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, struct FEffectProperties& Props) const;
 	
 };
