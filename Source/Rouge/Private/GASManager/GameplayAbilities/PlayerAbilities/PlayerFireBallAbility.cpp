@@ -40,6 +40,7 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 
 void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
+	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 	const FHitResult& HitData = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle, 0);
 	
 	const FVector HitLocation = HitData.Location;
@@ -84,7 +85,7 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 		FinishSpawnTransform.SetRotation(FinishedModifyPitch.Quaternion());
 		//FinishSpawnTransform.SetScale3D(FVector(5.f, 5.f, 5.f));
 		Projectile->FinishSpawning(FinishSpawnTransform);
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	}, 0.6f, false);
 }
 

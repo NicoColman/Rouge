@@ -18,6 +18,10 @@ struct RougeDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitChance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
+	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
+
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 	
 	RougeDamageStatics()
 	{
@@ -27,6 +31,19 @@ struct RougeDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, CriticalHitChance, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, CriticalHitResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, CriticalHitDamage, Source, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, FireResistance, Target, false);
+		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, LightningResistance, Target, false);
+
+		const FRougeGameplayTags& RougeTags = FRougeGameplayTags::Get();
+		
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_Armor, ArmorDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_ArmorPenetration, ArmorPenetrationDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_BlockChance, BlockChanceDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitDamage, CriticalHitDamageDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Resistance_Fire, FireResistanceDef);
+		TagsToCaptureDefs.Add(RougeTags.Attribute_Resistance_Lightning, LightningResistanceDef);
 	}
 };
 
@@ -44,6 +61,8 @@ UExecCalc_Damage::UExecCalc_Damage()
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitChanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitResistanceDef);
 	RelevantAttributesToCapture.Add(DamageStatics().CriticalHitDamageDef);
+	RelevantAttributesToCapture.Add(DamageStatics().FireResistanceDef);
+	RelevantAttributesToCapture.Add(DamageStatics().LightningResistanceDef);
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
@@ -68,9 +87,19 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
-	for (FGameplayTag DamageTypeTag : FRougeGameplayTags::Get().DamageTypes)
+	for (const auto& Pair : FRougeGameplayTags::Get().DamageTypesToResistances)
 	{
-		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		const FGameplayTag ResistanceType = Pair.Value;
+
+		checkf(RougeDamageStatics().TagsToCaptureDefs.Contains(ResistanceType), TEXT("ResistanceType not found in TagsToCaptureDefs"));
+		const FGameplayEffectAttributeCaptureDefinition DamageCaptureDef = RougeDamageStatics().TagsToCaptureDefs[ResistanceType];
+
+		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
+		
+		float ResistanceValue = 0.f;
+		ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageCaptureDef, EvaluationParameters, ResistanceValue);
+		ResistanceValue = FMath::Clamp(ResistanceValue, 0.f, 100.f);
+		DamageTypeValue *= (100 - ResistanceValue) / 100.f;
 		Damage += DamageTypeValue;
 	}
 	
@@ -98,7 +127,6 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const UCharacterBaseDataAsset* SourceDataAsset = URougeLibrary::GetCharacterBaseDataAsset(SourceActor);
 	const FRealCurve* ArmorPenetrationCurve = SourceDataAsset->DamageCalculationsCoefficients->FindCurve(FName("ArmorPenetration"), FString());
 	const float ArmorPenetrationCoefficient =  ArmorPenetrationCurve->Eval(InterfaceSourceCharacter->GetCharacterLevel());
-	UE_LOG(LogTemp, Warning, TEXT("ArmorPenetrationCoefficient: %f"), ArmorPenetrationCoefficient);
 	const float EffectiveArmor = TargetArmor *= (100 - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100;
 
 	const FRealCurve* EffectiveArmorCurve = SourceDataAsset->DamageCalculationsCoefficients->FindCurve(FName("EffectiveArmor"), FString());

@@ -15,7 +15,35 @@
 
 UAttributeSetBase::UAttributeSetBase()
 {
+	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
 
+	/* Primary Attributes */
+	TagsToAttributes.Add(GameplayTags.Attribute_Primary_Strength, GetStrengthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Primary_Intelligence, GetIntelligenceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Primary_Resilience, GetResilienceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Primary_Vigor, GetVigorAttribute);
+
+	/* Secondary Attributes */
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_Armor, GetArmorAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_ArmorPenetration, GetArmorPenetrationAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_BlockChance, GetBlockChanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_CriticalHitChance, GetCriticalHitChanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_CriticalHitDamage, GetCriticalHitDamageAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_CriticalHitResistance, GetCriticalHitResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_HealthRegeneration, GetHealthRegenerationAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_ManaRegeneration, GetManaRegenerationAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_MaxHealth, GetMaxHealthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Secondary_MaxMana, GetMaxManaAttribute);
+
+	/* Vital Attributes */
+	TagsToAttributes.Add(GameplayTags.Attribute_Vital_Health, GetHealthAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Vital_Mana, GetManaAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Vital_Speed, GetSpeedAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Vital_JumpHeight, GetJumpHeightAttribute);
+	
+	/* Resistance Attributes */
+	TagsToAttributes.Add(GameplayTags.Attribute_Resistance_Fire, GetFireResistanceAttribute);
+	TagsToAttributes.Add(GameplayTags.Attribute_Resistance_Lightning, GetLightningResistanceAttribute);
 }
 
 void UAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -100,7 +128,7 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 		else
 		{
 			FGameplayTagContainer TagContainer;
-			TagContainer.AddTag(FRougeGameplayTags::Get().Effect_HitReact);
+			//TagContainer.AddTag(FRougeGameplayTags::Get().Effect_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 		}
 		const bool bBlock = URougeLibrary::IsBlockedHit(Props.EffectContextHandle);
