@@ -16,7 +16,8 @@ void UPlayerFireBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
                                              const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
+	
 	GetWeaponAssets();
 
 	UAbilityTask_TargetDataUnderMouse* TargetDataUnderMouse = UAbilityTask_TargetDataUnderMouse::CreateTargetDataUnderMouse(this);

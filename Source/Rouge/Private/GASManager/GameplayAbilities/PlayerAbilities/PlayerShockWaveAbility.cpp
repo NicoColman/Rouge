@@ -13,6 +13,7 @@ void UPlayerShockWaveAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
                                               const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
 
 	FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
 	

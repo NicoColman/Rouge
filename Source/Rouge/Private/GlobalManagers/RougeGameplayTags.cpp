@@ -223,6 +223,21 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		);
 	/** End Abilities Tags */
 
+	/** Begin Cooldown Tags */
+	GameplayTags.CooldownTag_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.Dash"),
+		FString("Cooldown Dash")
+		);
+	GameplayTags.CooldownTag_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.Fireball"),
+		FString("Cooldown Fireball")
+		);
+	GameplayTags.CooldownTag_Shockwave = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.Shockwave"),
+		FString("Cooldown Shockwave")
+		);
+	/** End Cooldown Tags */
+
 	/** Begin GameplayCue Tags */
 	// Static Tags
 	GameplayTags.GameplayCue_Ability_Spell_Cast = UGameplayTagsManager::Get().AddNativeGameplayTag(

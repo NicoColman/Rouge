@@ -100,6 +100,12 @@ public:
 	FGameplayTag Ability_Shockwave;
 	/** End Abilities Tags */
 
+	/** Begin Cooldown Tags */
+	FGameplayTag CooldownTag_Dash;
+	FGameplayTag CooldownTag_Fireball;
+	FGameplayTag CooldownTag_Shockwave;
+	/** End Cooldown Tags */
+
 	/** Begin GameplayCue Tags */
 	// Static Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
