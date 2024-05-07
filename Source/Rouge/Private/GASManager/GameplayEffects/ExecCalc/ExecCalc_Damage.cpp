@@ -4,6 +4,7 @@
 #include "GASManager/GameplayEffects/ExecCalc/ExecCalc_Damage.h"
 #include "AbilitySystemComponent.h"
 #include "Characters/CharacterDataAssets/CharacterBaseDataAsset.h"
+#include "CoreUtilites/RougeAbilityTypes.h"
 #include "CoreUtilites/RougeLibrary.h"
 #include "GASManager/AttributeSet/AttributeSetBase.h"
 #include "GlobalManagers/RougeGameplayTags.h"
@@ -66,16 +67,25 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.TargetTags = TargetTags;
 
 	// Get Damage Set by Caller Magnitude
-	float Damage = Spec.GetSetByCallerMagnitude(FRougeGameplayTags::Get().Damage);
-
+	float Damage = 0.f;
+	for (FGameplayTag DamageTypeTag : FRougeGameplayTags::Get().DamageTypes)
+	{
+		const float DamageTypeValue = Spec.GetSetByCallerMagnitude(DamageTypeTag);
+		Damage += DamageTypeValue;
+	}
+	
 	// Capture BlockChance on Target, and check for successful Block
 	float TargetBlockChance = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().BlockChanceDef, EvaluationParameters, TargetBlockChance);
 	TargetBlockChance = FMath::Max<float>(TargetBlockChance, 0.f);
 
 	const bool bBlocked = FMath::RandRange(1, 100) <= TargetBlockChance;
-	Damage = bBlocked ? 0.f : Damage;
 
+	FGameplayEffectContextHandle EffectContext = Spec.GetContext();
+	URougeLibrary::SetBlockedHit(EffectContext, bBlocked);
+	
+	Damage = bBlocked ? 0.f : Damage;
+	
 	// Calculate Armor and Armor Penetration
 	float TargetArmor = 0.f;
 	ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(DamageStatics().ArmorDef, EvaluationParameters, TargetArmor);
@@ -115,6 +125,8 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(1, 100) <= EffectiveCriticalHitChance;
 
+	URougeLibrary::SetCriticalHit(EffectContext, bCriticalHit);
+	
 	Damage = bCriticalHit ? 2.5f * Damage + SourceCriticalHitDamage : Damage;
 	
 	const FGameplayModifierEvaluatedData EvaluatedData(UAttributeSetBase::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);

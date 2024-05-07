@@ -173,6 +173,16 @@ void FRougeGameplayTags::InitializeNativeGameplayTags() {
 		FName("Damage"),
 		FString("Damage")
 		);
+	GameplayTags.Damage_Fire = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Fire"),
+		FString("Damage Fire")
+		);
+	GameplayTags.Damage_Lightning = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Damage.Lightning"),
+		FString("Damage Lightning")
+		);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Fire);
+	GameplayTags.DamageTypes.Add(GameplayTags.Damage_Lightning);
 	/** End Damage Tags */
 
 	/** Begin Abilities Tags*/

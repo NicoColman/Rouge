@@ -6,6 +6,7 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "Net/UnrealNetwork.h"
 #include "GameplayEffectExtension.h"
+#include "CoreUtilites/RougeLibrary.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/GameModeBase.h"
@@ -102,6 +103,8 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 			TagContainer.AddTag(FRougeGameplayTags::Get().Effect_HitReact);
 			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
 		}
+		const bool bBlock = URougeLibrary::IsBlockedHit(Props.EffectContextHandle);
+		const bool bCritical = URougeLibrary::IsCriticalHit(Props.EffectContextHandle); 
 	}
 }
 

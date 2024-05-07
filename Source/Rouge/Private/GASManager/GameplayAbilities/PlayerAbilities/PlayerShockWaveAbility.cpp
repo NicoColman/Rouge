@@ -44,12 +44,9 @@ void UPlayerShockWaveAbility::ApplyDamageEffect(AActor* HitActor) const
 	if (UAbilitySystemComponent* TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitActor))
 	{
 		const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-		const FGameplayEffectSpecHandle DamageEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
+		FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 
-		const float ScaleDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, FRougeGameplayTags::Get().Damage, ScaleDamage);
-		
-		TargetAsc->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
+		TargetAsc->ApplyGameplayEffectSpecToSelf(*AssignDamageTypes(AbilitySystemComponent, ContextHandle).Data.Get());
 	}
 }
 

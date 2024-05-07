@@ -3,7 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GASManager/GameplayAbilities/InputBaseAbility.h"
+#include "GASManager/GameplayAbilities/RougeDamageBaseAbility.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "PlayerFireBallAbility.generated.h"
 
@@ -11,7 +11,7 @@
  * 
  */
 UCLASS()
-class ROUGE_API UPlayerFireBallAbility : public UInputBaseAbility
+class ROUGE_API UPlayerFireBallAbility : public URougeDamageBaseAbility
 {
 	GENERATED_BODY()
 
@@ -30,5 +30,4 @@ private:
 	FGameplayTag WeaponTag;
 	TObjectPtr<class UPaperFlipbookComponent> WeaponFlipbook;
 	TSubclassOf<class AFireBallProjectile> ProjectileClass;
-	TSubclassOf<UGameplayEffect> DamageEffectClass;
 };

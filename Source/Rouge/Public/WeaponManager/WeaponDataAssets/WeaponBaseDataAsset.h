@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "Engine/DataAsset.h"
 #include "GameplayTagContainer.h"
+#include "ScalableFloat.h"
 #include "WeaponBaseDataAsset.generated.h"
 
 /**
@@ -24,10 +25,13 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Base")
 	TSoftObjectPtr<class UPaperFlipbook> WeaponFlipbook;
 	
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Base")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
 	TSoftClassPtr<class AFireBallProjectile> Projectile;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Base")
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
+	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
 	TSubclassOf<class UGameplayEffect> DamageEffectClass;
 	
 	UPROPERTY()

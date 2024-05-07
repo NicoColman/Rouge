@@ -82,6 +82,9 @@ public:
 
 	/** Begin Damage Tags */
 	FGameplayTag Damage;
+	FGameplayTag Damage_Fire;
+	FGameplayTag Damage_Lightning;
+	TArray<FGameplayTag> DamageTypes;
 	/** End Damage Tags */
 
 	/** Begin Abilities Tags*/

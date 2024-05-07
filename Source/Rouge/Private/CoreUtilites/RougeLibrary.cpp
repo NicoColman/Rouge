@@ -2,6 +2,8 @@
 
 
 #include "CoreUtilites/RougeLibrary.h"
+
+#include "CoreUtilites/RougeAbilityTypes.h"
 #include "GlobalManagers/RougeAssetManager.h"
 #include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
 
@@ -62,4 +64,38 @@ UCharacterBaseDataAsset* URougeLibrary::GetCharacterBaseDataAsset(AActor* Actor)
 		return CharacterInterface->GetCharacterDataAsset();
 	}
 	return nullptr;
+}
+
+bool URougeLibrary::IsBlockedHit(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->IsBlockedHit();
+	}
+	return false;
+}
+
+bool URougeLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->IsCriticalHit();
+	}
+	return false;
+}
+
+void URougeLibrary::SetBlockedHit(FGameplayEffectContextHandle& EffectContext, bool bBlockedHit)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetIsBlockedHit(bBlockedHit);
+	}
+}
+
+void URougeLibrary::SetCriticalHit(FGameplayEffectContextHandle& EffectContext, bool bCriticalHit)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetIsCriticalHit(bCriticalHit);
+	}
 }

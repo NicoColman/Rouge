@@ -34,6 +34,7 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 		WeaponFlipbook = WeaponDataAsset->WeaponFlipbookComponent;
 		ProjectileClass = WeaponDataAsset->Projectile.Get();
 		DamageEffectClass = WeaponDataAsset->DamageEffectClass;
+		DamageTypes = WeaponDataAsset->DamageTypes;
 	}
 }
 
@@ -93,9 +94,6 @@ void UPlayerFireBallAbility::ApplyDamageEffect(AFireBallProjectile* SpawningProj
 	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
 	ContextHandle.SetAbility(this);
 	ContextHandle.AddSourceObject(SpawningProjectile);
-	const FGameplayEffectSpecHandle DamageEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
 
-	const float ScaleDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTags.Damage, ScaleDamage);
-	SpawningProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
+	SpawningProjectile->DamageEffectSpecHandle = AssignDamageTypes(AbilitySystemComponent, ContextHandle);
 }
