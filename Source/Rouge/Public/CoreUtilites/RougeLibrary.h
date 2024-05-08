@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
+#include "RougeAbilityTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RougeLibrary.generated.h"
 
@@ -34,6 +36,17 @@ public:
 	
 	static class UCharacterBaseDataAsset* GetCharacterBaseDataAsset(AActor* Actor);
 
+	static bool IsBlockedHit(const FGameplayEffectContextHandle& EffectContext);
+
+	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContext);
+
+	// If exposed to BP add "UPARAM(ref) FGameplayEffectContextHandle& EffectContext" instead of "FGameplayEffectContextHandle& EffectContext"
+	static void SetBlockedHit(FGameplayEffectContextHandle& EffectContext, bool bBlockedHit);
+
+	static void SetCriticalHit(FGameplayEffectContextHandle& EffectContext, bool bCriticalHit);
+
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+	
 private:
 	static FPrimaryAssetId GetPrimaryAssetIdFromTag(const FGameplayTag& Tag, const ANSICHAR* InName);
 };

@@ -15,7 +15,7 @@ void UPlayerDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
                                          const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-	
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
 	ActiveEffectHandle = BP_ApplyGameplayEffectToOwner(DashEffect, 1, 1);
 	
 	ExecuteGameplayCue();

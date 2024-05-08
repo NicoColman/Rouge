@@ -16,7 +16,8 @@ void UPlayerFireBallAbility::ActivateAbility(const FGameplayAbilitySpecHandle Ha
                                              const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
-
+	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
+	
 	GetWeaponAssets();
 
 	UAbilityTask_TargetDataUnderMouse* TargetDataUnderMouse = UAbilityTask_TargetDataUnderMouse::CreateTargetDataUnderMouse(this);
@@ -34,11 +35,14 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 		WeaponFlipbook = WeaponDataAsset->WeaponFlipbookComponent;
 		ProjectileClass = WeaponDataAsset->Projectile.Get();
 		DamageEffectClass = WeaponDataAsset->DamageEffectClass;
+		DamageType = WeaponDataAsset->DamageType;
+		Damage = WeaponDataAsset->Damage;
 	}
 }
 
 void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
+	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 	const FHitResult& HitData = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle, 0);
 	
 	const FVector HitLocation = HitData.Location;
@@ -58,17 +62,10 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	Projectile->SetInstigator(AvatarPawn);
 	Projectile->SetOwner(AvatarPawn);
 
-	ApplyDamageEffect(Projectile);
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
-	FGameplayCueParameters CueParams;
-	CueParams.Location = Socket;
-	CueParams.TargetAttachComponent = WeaponFlipbook;
-	FGameplayTagContainer SourceTags;
-	SourceTags.AddTag(WeaponTag);
-	CueParams.AggregatedSourceTags = SourceTags;
-	CueParams.AbilityLevel = 1.f;
-	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
-
+	ExecuteCastGameplayCue(Socket);
+	
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, HitLocation]()
 	{
@@ -83,19 +80,17 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 		FinishSpawnTransform.SetRotation(FinishedModifyPitch.Quaternion());
 		//FinishSpawnTransform.SetScale3D(FVector(5.f, 5.f, 5.f));
 		Projectile->FinishSpawning(FinishSpawnTransform);
-		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), false, false);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	}, 0.6f, false);
 }
 
-void UPlayerFireBallAbility::ApplyDamageEffect(AFireBallProjectile* SpawningProjectile) const
+void UPlayerFireBallAbility::ExecuteCastGameplayCue(const FVector& Socket) const
 {
-	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	ContextHandle.SetAbility(this);
-	ContextHandle.AddSourceObject(SpawningProjectile);
-	const FGameplayEffectSpecHandle DamageEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
+	FGameplayCueParameters CueParams;
+	CueParams.Location = Socket;
+	CueParams.TargetAttachComponent = WeaponFlipbook;
+	CueParams.AggregatedSourceTags.AddTag(WeaponTag);
+	CueParams.AbilityLevel = 1.f;
+	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
 
-	const float ScaleDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, GameplayTags.Damage, ScaleDamage);
-	SpawningProjectile->DamageEffectSpecHandle = DamageEffectSpecHandle;
 }

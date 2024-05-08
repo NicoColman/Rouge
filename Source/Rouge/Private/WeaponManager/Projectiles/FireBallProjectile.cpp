@@ -13,6 +13,7 @@
 #include "Components/SphereComponent.h"
 #include "GameFramework/Character.h"
 #include "Components/CapsuleComponent.h"
+#include "CoreUtilites/RougeLibrary.h"
 
 
 AFireBallProjectile::AFireBallProjectile()
@@ -57,36 +58,35 @@ void AFireBallProjectile::BeginPlay()
 void AFireBallProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (OtherActor == GetInstigator()) return;
-	
-	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), 1.f);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, GetActorLocation(), FRotator::ZeroRotator, FVector::OneVector, true);
-	SoundComponent->Stop();
+	if (DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() == OtherActor) return;
+	//if (DamageEffectSpecHandle.Data.IsValid() && DamageEffectSpecHandle.Data.Get()->GetContext().GetEffectCauser() == OtherActor) return;
+	//if (OtherActor == GetInstigator()) return;
+
+	if (!bHit) OnHit();
 	
 	if (HasAuthority())
 	{
 		if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
 		{
-			if (DamageEffectSpecHandle.Data.IsValid())
-			{
-				TargetASC->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
-			}
+			DamageEffectParams.TargetAbilitySystemComponent = TargetASC;
+			URougeLibrary::ApplyDamageEffect(DamageEffectParams);
 		}
 		Destroy();
 	}
-	else
-	{
-		bHit = true;
-	}
+	else bHit = true;
 }
 
 void AFireBallProjectile::Destroyed()
 {
-	if (!bHit && !HasAuthority())
-	{
-		UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), 1.f);
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, GetActorLocation(), FRotator::ZeroRotator, FVector::OneVector, true);
-		SoundComponent->Stop();
-	}
+	if (!bHit && !HasAuthority()) OnHit();
+	
 	Super::Destroyed();
+}
+
+void AFireBallProjectile::OnHit()
+{
+	UGameplayStatics::PlaySoundAtLocation(this, ImpactSound, GetActorLocation(), 1.f);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), NiagaraImpactFX, GetActorLocation(), FRotator::ZeroRotator, FVector::OneVector, true);
+	if (SoundComponent) SoundComponent->Stop();
+	bHit = true;
 }
