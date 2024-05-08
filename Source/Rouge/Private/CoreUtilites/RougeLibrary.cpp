@@ -3,8 +3,11 @@
 
 #include "CoreUtilites/RougeLibrary.h"
 
+#include "AbilitySystemBlueprintLibrary.h"
+#include "AbilitySystemComponent.h"
 #include "CoreUtilites/RougeAbilityTypes.h"
 #include "GlobalManagers/RougeAssetManager.h"
+#include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
 
 URougeLibrary::URougeLibrary()
@@ -98,4 +101,23 @@ void URougeLibrary::SetCriticalHit(FGameplayEffectContextHandle& EffectContext, 
 	{
 		RougeEffectContext->SetIsCriticalHit(bCriticalHit);
 	}
+}
+
+FGameplayEffectContextHandle URougeLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
+{
+	const FRougeGameplayTags& RougeGameplayTags = FRougeGameplayTags::Get();
+	const AActor* SourceActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
+
+	FGameplayEffectContextHandle EffectContext = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
+	EffectContext.AddSourceObject(SourceActor);
+	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageEffectClass, DamageEffectParams.AbilityLevel, EffectContext);
+
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Chance, DamageEffectParams.DebuffChance);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Duration, DamageEffectParams.DebuffDuration);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Damage, DamageEffectParams.DebuffDamage);
+	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Frequency, DamageEffectParams.DebuffFrequency);
+	
+	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
+	return EffectContext;
 }

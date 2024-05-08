@@ -131,6 +131,18 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	/** End Damage Tags */
 
+	/** Begin Debuff Tags */
+	FGameplayTag Debuff_Burn;
+	FGameplayTag Debuff_Stun;
+
+	FGameplayTag Debuff_Chance;
+	FGameplayTag Debuff_Damage;
+	FGameplayTag Debuff_Duration;
+	FGameplayTag Debuff_Frequency;
+	
+	TMap<FGameplayTag, FGameplayTag> DebuffsToResistances;
+	/** End Debuff Tags */
+
 	
 	/**
 	 *	Weapon Related Tags

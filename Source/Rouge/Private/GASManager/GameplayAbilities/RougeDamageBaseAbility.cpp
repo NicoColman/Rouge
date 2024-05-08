@@ -4,15 +4,20 @@
 #include "GASManager/GameplayAbilities/RougeDamageBaseAbility.h"
 
 #include "AbilitySystemBlueprintLibrary.h"
-#include "AbilitySystemComponent.h"
 
-FGameplayEffectSpecHandle URougeDamageBaseAbility::AssignDamageTypes(const UAbilitySystemComponent* ASC ,const FGameplayEffectContextHandle& ContextHandle) const
+FDamageEffectParams URougeDamageBaseAbility::MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor) const
 {
-	const FGameplayEffectSpecHandle DamageEffectSpecHandle = ASC->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
-	for (auto& Pair : DamageTypes)
-	{
-		const float ScaledDamage = Pair.Value.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, Pair.Key, ScaledDamage);
-	}
-	return DamageEffectSpecHandle;
+	FDamageEffectParams Params;
+	Params.WorldContextObject = GetAvatarActorFromActorInfo();
+	Params.DamageEffectClass = DamageEffectClass;
+	Params.SourceAbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
+	Params.TargetAbilitySystemComponent = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	Params.BaseDamage = Damage.GetValueAtLevel(GetAbilityLevel());
+	Params.AbilityLevel = GetAbilityLevel();
+	Params.DamageType = DamageType;
+	Params.DebuffChance = DebuffChance;
+	Params.DebuffDuration = DebuffDuration;
+	Params.DebuffDamage = DebuffDamage;
+	Params.DebuffFrequency = DebuffFrequency;
+	return Params;
 }

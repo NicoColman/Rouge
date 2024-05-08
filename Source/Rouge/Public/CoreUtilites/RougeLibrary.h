@@ -5,6 +5,7 @@
 #include "CoreMinimal.h"
 #include "GameplayEffectTypes.h"
 #include "GameplayTagContainer.h"
+#include "RougeAbilityTypes.h"
 #include "Kismet/BlueprintFunctionLibrary.h"
 #include "RougeLibrary.generated.h"
 
@@ -39,10 +40,13 @@ public:
 
 	static bool IsCriticalHit(const FGameplayEffectContextHandle& EffectContext);
 
-	// If exposed to BP add UPARAM(ref) to EffectContext
+	// If exposed to BP add "UPARAM(ref) FGameplayEffectContextHandle& EffectContext" instead of "FGameplayEffectContextHandle& EffectContext"
 	static void SetBlockedHit(FGameplayEffectContextHandle& EffectContext, bool bBlockedHit);
 
 	static void SetCriticalHit(FGameplayEffectContextHandle& EffectContext, bool bCriticalHit);
+
+	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
+	
 private:
 	static FPrimaryAssetId GetPrimaryAssetIdFromTag(const FGameplayTag& Tag, const ANSICHAR* InName);
 };

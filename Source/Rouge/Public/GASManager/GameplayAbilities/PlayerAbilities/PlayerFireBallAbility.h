@@ -21,7 +21,7 @@ public:
 	
 private:
 	void GetWeaponAssets();
-	void ApplyDamageEffect(class AFireBallProjectile* SpawningProjectile) const;
+	void ExecuteCastGameplayCue(const FVector& Socket) const;
 	
 	UFUNCTION()
 	void OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle);

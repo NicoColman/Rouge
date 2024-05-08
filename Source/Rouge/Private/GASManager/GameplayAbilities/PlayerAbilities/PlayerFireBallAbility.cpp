@@ -35,7 +35,8 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 		WeaponFlipbook = WeaponDataAsset->WeaponFlipbookComponent;
 		ProjectileClass = WeaponDataAsset->Projectile.Get();
 		DamageEffectClass = WeaponDataAsset->DamageEffectClass;
-		DamageTypes = WeaponDataAsset->DamageTypes;
+		DamageType = WeaponDataAsset->DamageType;
+		Damage = WeaponDataAsset->Damage;
 	}
 }
 
@@ -61,17 +62,10 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	Projectile->SetInstigator(AvatarPawn);
 	Projectile->SetOwner(AvatarPawn);
 
-	ApplyDamageEffect(Projectile);
+	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
 
-	FGameplayCueParameters CueParams;
-	CueParams.Location = Socket;
-	CueParams.TargetAttachComponent = WeaponFlipbook;
-	FGameplayTagContainer SourceTags;
-	SourceTags.AddTag(WeaponTag);
-	CueParams.AggregatedSourceTags = SourceTags;
-	CueParams.AbilityLevel = 1.f;
-	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
-
+	ExecuteCastGameplayCue(Socket);
+	
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, [this, Projectile, HitLocation]()
 	{
@@ -90,12 +84,13 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 	}, 0.6f, false);
 }
 
-void UPlayerFireBallAbility::ApplyDamageEffect(AFireBallProjectile* SpawningProjectile) const
+void UPlayerFireBallAbility::ExecuteCastGameplayCue(const FVector& Socket) const
 {
-	const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-	FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-	ContextHandle.SetAbility(this);
-	ContextHandle.AddSourceObject(SpawningProjectile);
+	FGameplayCueParameters CueParams;
+	CueParams.Location = Socket;
+	CueParams.TargetAttachComponent = WeaponFlipbook;
+	CueParams.AggregatedSourceTags.AddTag(WeaponTag);
+	CueParams.AbilityLevel = 1.f;
+	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
 
-	SpawningProjectile->DamageEffectSpecHandle = AssignDamageTypes(AbilitySystemComponent, ContextHandle);
 }

@@ -29,7 +29,10 @@ public:
 	TSoftClassPtr<class AFireBallProjectile> Projectile;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
-	TMap<FGameplayTag, FScalableFloat> DamageTypes;
+	FGameplayTag DamageType;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
+	FScalableFloat Damage;
 	
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, Category = "Weapon Damage")
 	TSubclassOf<class UGameplayEffect> DamageEffectClass;
