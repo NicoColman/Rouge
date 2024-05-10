@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "CoreUtilites/RougeLibrary.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 
 
@@ -13,9 +14,10 @@ void UPlayerShockWaveAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
                                               const FGameplayEventData* TriggerEventData)
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
+	
 	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
-
-	FVector StartLocation = GetAvatarActorFromActorInfo()->GetActorLocation();
+	AActor* AvatarActor = GetAvatarActorFromActorInfo();
+	FVector StartLocation = AvatarActor->GetActorLocation();
 	
 	TArray<FHitResult> HitResults;
 	GetWorld()->SweepMultiByProfile(
@@ -31,39 +33,19 @@ void UPlayerShockWaveAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 	FGameplayCueParameters CueParameters;
 	CueParameters.AggregatedSourceTags.AddTag(FRougeGameplayTags::Get().Ability_Shockwave);
 	GetAbilitySystemComponentFromActorInfo()->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Base, CueParameters);
+	
 	for (FHitResult HitResult : HitResults)
 	{
-		if (HitResult.GetActor() == GetAvatarActorFromActorInfo()) continue;
-		ApplyDamageEffect(HitResult.GetActor());
-		ApplyStunEffect(HitResult.GetActor());
-	}
-	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
-}
-
-void UPlayerShockWaveAbility::ApplyDamageEffect(AActor* HitActor) const
-{
-	if (UAbilitySystemComponent* TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitActor))
-	{
-		const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-		FGameplayEffectContextHandle ContextHandle = AbilitySystemComponent->MakeEffectContext();
-		const FGameplayEffectSpecHandle DamageEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(DamageEffectClass, GetAbilityLevel(), ContextHandle);
-	
-		const float ScaledDamage = Damage.GetValueAtLevel(GetAbilityLevel());
-		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(DamageEffectSpecHandle, DamageType, ScaledDamage);
+		AActor* HitActor = HitResult.GetActor();
+		if (HitActor == AvatarActor) continue;
+		if (UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitActor) && AvatarActor->HasAuthority())
+		{
+			URougeLibrary::ApplyDamageEffect(MakeDamageEffectParamsFromClassDefaults(HitActor));
+		}
 		
-		TargetAsc->ApplyGameplayEffectSpecToSelf(*DamageEffectSpecHandle.Data.Get());
 	}
-}
-
-void UPlayerShockWaveAbility::ApplyStunEffect(AActor* HitActor) const
-{
-	if (UAbilitySystemComponent* TargetAsc = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(HitActor))
-	{
-		const UAbilitySystemComponent* AbilitySystemComponent = GetAbilitySystemComponentFromActorInfo();
-		const FGameplayEffectSpecHandle StunEffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(StunEffectClass, GetAbilityLevel(), AbilitySystemComponent->MakeEffectContext());
-
-		TargetAsc->ApplyGameplayEffectSpecToSelf(*StunEffectSpecHandle.Data.Get());
-	}
+	
+	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 }
 
 float UPlayerShockWaveAbility::GetSphereRadius() const

@@ -5,6 +5,7 @@
 #include "AbilitySystemComponent.h"
 #include "GASManager/AbilitySystem/ASCBase.h"
 #include "GASManager/AttributeSet/AttributeSetBase.h"
+#include "GlobalManagers/RougeGameplayTags.h"
 
 ACharacterEnemy::ACharacterEnemy()
 {
@@ -29,6 +30,7 @@ void ACharacterEnemy::BeginPlay()
 	Super::BeginPlay();
 	AbilitySystemComponent->InitAbilityActorInfo(this, this);
 	Cast<UASCBase>(AbilitySystemComponent)->AbilityActorInfoSet();
+	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterEnemy::StunTagChanged);
 	if (HasAuthority())
 	{
 		InitializeAttributes();

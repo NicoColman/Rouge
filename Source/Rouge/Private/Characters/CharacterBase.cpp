@@ -9,9 +9,11 @@
 #include "AbilitySystemComponent.h"
 #include "PaperZDAnimationComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GASManager/Debuffs/DebuffNiagaraComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
+#include "Net/UnrealNetwork.h"
 
 
 ACharacterBase::ACharacterBase()
@@ -32,6 +34,21 @@ ACharacterBase::ACharacterBase()
 	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffComponent"));
 	BurnDebuffComponent->SetupAttachment(GetSprite());
 	BurnDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Burn;
+
+	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffComponent"));
+	StunDebuffComponent->SetupAttachment(GetSprite());
+	StunDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Stun;
+
+	bIsBurned = false;
+	bIsStunned = false;
+}
+
+void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACharacterBase, bIsBurned);
+	DOREPLIFETIME(ACharacterBase, bIsStunned);
 }
 
 void ACharacterBase::BeginPlay()
@@ -41,6 +58,8 @@ void ACharacterBase::BeginPlay()
 	if (!CharacterDataAsset) return;
 	GetSprite()->SetFlipbook(CharacterDataAsset->CharacterFlipbook);
 	GetAnimationComponent()->SetAnimInstanceClass(CharacterDataAsset->CharacterAnimInstance);
+	BurnDebuffComponent->SetAsset(CharacterDataAsset->BurnSystem);
+	StunDebuffComponent->SetAsset(CharacterDataAsset->StunSystem);
 }
 
 void ACharacterBase::InitializeAbilitySystem()
@@ -94,3 +113,23 @@ int32 ACharacterBase::GetCharacterLevel() const
 void ACharacterBase::SetPlayerWeapon(AActor* Weapon)
 {
 }
+
+void ACharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsStunned = NewCount > 0;
+	if (GetCharacterMovement()->MaxWalkSpeed > 0.f)
+	{
+		OldWalkSpeed = GetCharacterMovement()->MaxWalkSpeed;
+	}
+	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : OldWalkSpeed;
+}
+
+void ACharacterBase::OnRep_IsBurned()
+{
+}
+
+void ACharacterBase::OnRep_IsStunned()
+{
+	
+}
+

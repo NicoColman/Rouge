@@ -5,7 +5,9 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
+
 
 UDebuffNiagaraComponent::UDebuffNiagaraComponent()
 {

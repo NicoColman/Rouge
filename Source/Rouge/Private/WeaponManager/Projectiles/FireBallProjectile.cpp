@@ -44,10 +44,7 @@ AFireBallProjectile::AFireBallProjectile()
 void AFireBallProjectile::BeginPlay()
 {
 	Super::BeginPlay();
-
-	const ACharacter* CharacterInstigator = Cast<ACharacter>(GetInstigator());
-	SphereComponent->IgnoreActorWhenMoving(GetInstigator(), true);
-	SphereComponent->IgnoreComponentWhenMoving(CharacterInstigator->GetCapsuleComponent(), true);
+	SetReplicateMovement(true);
 	if (HasAuthority())
 	{
 		SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AFireBallProjectile::OnSphereOverlap);
@@ -58,7 +55,7 @@ void AFireBallProjectile::BeginPlay()
 void AFireBallProjectile::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	if (DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() == OtherActor) return;
+	if (!DamageEffectParams.SourceAbilitySystemComponent || DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor() == OtherActor) return;
 
 	if (!bHit) OnHit();
 	
