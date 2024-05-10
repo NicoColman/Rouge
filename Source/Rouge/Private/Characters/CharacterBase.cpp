@@ -114,6 +114,11 @@ void ACharacterBase::SetPlayerWeapon(AActor* Weapon)
 {
 }
 
+void ACharacterBase::BurnTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsBurned = NewCount > 0;
+}
+
 void ACharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
 {
 	bIsStunned = NewCount > 0;

@@ -38,6 +38,7 @@ public:
 	UPROPERTY(ReplicatedUsing=OnRep_IsStunned, BlueprintReadOnly)
 	bool bIsStunned;
 
+	virtual void BurnTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	
 protected:
