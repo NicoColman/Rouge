@@ -77,6 +77,7 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Burn, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::BurnTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::StunTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Buff_Heal, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::HealTagChanged);
 	/*
 	if (IAttributeSetBaseInterface* AttributeSetInterface = Cast<IAttributeSetBaseInterface>(GetPlayerState()))
 	{
@@ -124,5 +125,17 @@ void ACharacterPlayer::OnRep_IsStunned()
 		{
 			AbilitySystemComponent->RemoveLooseGameplayTags(StunTagContainer);
 		}
+	}
+}
+
+void ACharacterPlayer::OnRep_IsHealed()
+{
+	if (bIsHealed)
+	{
+		HealBuffComponent->Activate();
+	}
+	else
+	{
+		HealBuffComponent->Deactivate();
 	}
 }

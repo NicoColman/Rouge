@@ -99,6 +99,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("StateTag.Player.Dashing"),
 		FString("State tag for Dashing")
 		);
+	GameplayTags.StateTag_Player_Healing = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("StateTag.Player.Healing"),
+		FString("State tag for Healing")
+		);
 	/** End State Tags */
 
 	
@@ -236,6 +240,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("CooldownTag.Shockwave"),
 		FString("Cooldown Shockwave")
 		);
+	GameplayTags.CooldownTag_Heal = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.Heal"),
+		FString("Cooldown Heal")
+		);
 	/** End Cooldown Tags */
 
 	/** Begin GameplayCue Tags */
@@ -269,6 +277,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("GameplayCue.Ability.ShockedLoop"),
 		FString("Gameplay Cue for Ability Shocked Loop")
 		);
+	GameplayTags.GameplayCue_Ability_HealLoop = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.HealLoop"),
+		FString("Gameplay Cue for Ability Heal Loop")
+		);
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */
@@ -301,6 +313,17 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	GameplayTags.DamageTypesToResistances.Add(GameplayTags.Damage_Lightning, GameplayTags.Attribute_Resistance_Lightning);
 	/** End Damage Tags */
 
+	/** Begin Buff Tags */
+	GameplayTags.Buff = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff"),
+		FString("Buff")
+		);
+	GameplayTags.Buff_Heal = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Buff.Heal"),
+		FString("Buff Heal")
+		);
+	/** End Buff Tags */
+	
 	/** Begin Debuff Tags */
 	GameplayTags.Debuff = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff"),

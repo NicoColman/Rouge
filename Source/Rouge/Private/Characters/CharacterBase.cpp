@@ -39,8 +39,13 @@ ACharacterBase::ACharacterBase()
 	StunDebuffComponent->SetupAttachment(GetSprite());
 	StunDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Stun;
 
+	HealBuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("HealBuffComponent"));
+	HealBuffComponent->SetupAttachment(GetSprite());
+	HealBuffComponent->DebuffTag = FRougeGameplayTags::Get().Buff_Heal;
+
 	bIsBurned = false;
 	bIsStunned = false;
+	bIsHealed = false;
 }
 
 void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -60,6 +65,7 @@ void ACharacterBase::BeginPlay()
 	GetAnimationComponent()->SetAnimInstanceClass(CharacterDataAsset->CharacterAnimInstance);
 	BurnDebuffComponent->SetAsset(CharacterDataAsset->BurnSystem);
 	StunDebuffComponent->SetAsset(CharacterDataAsset->StunSystem);
+	HealBuffComponent->SetAsset(CharacterDataAsset->HealSystem);
 }
 
 void ACharacterBase::InitializeAbilitySystem()
@@ -129,12 +135,20 @@ void ACharacterBase::StunTagChanged(const FGameplayTag CallbackTag, int32 NewCou
 	GetCharacterMovement()->MaxWalkSpeed = bIsStunned ? 0.f : OldWalkSpeed;
 }
 
+void ACharacterBase::HealTagChanged(const FGameplayTag CallbackTag, int32 NewCount)
+{
+	bIsHealed = NewCount > 0;
+}
+
 void ACharacterBase::OnRep_IsBurned()
 {
 }
 
 void ACharacterBase::OnRep_IsStunned()
 {
-	
+}
+
+void ACharacterBase::OnRep_IsHealed()
+{
 }
 

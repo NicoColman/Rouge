@@ -24,6 +24,8 @@ public:
 	TObjectPtr<class UNiagaraSystem> BurnSystem;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
 	TObjectPtr<class UNiagaraSystem> StunSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
+	TObjectPtr<class UNiagaraSystem> HealSystem;
 
 	/** Gas */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")

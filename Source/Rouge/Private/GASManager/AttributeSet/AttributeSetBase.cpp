@@ -84,6 +84,7 @@ void UAttributeSetBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, Health, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, Mana, COND_None, REPNOTIFY_Always);
 	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, JumpHeight, COND_None, REPNOTIFY_Always);
+	DOREPLIFETIME_CONDITION_NOTIFY(UAttributeSetBase, Sanity, COND_None, REPNOTIFY_Always);
 }
 
 /** Only used for clamp attributes, this function fires everytime a value gets updated, it's not permanently changed */
@@ -271,6 +272,11 @@ void UAttributeSetBase::OnRep_Speed(const FGameplayAttributeData& OldSpeed) cons
 void UAttributeSetBase::OnRep_JumpHeight(const FGameplayAttributeData& OldJumpHeight) const
 {
 	GAMEPLAYATTRIBUTE_REPNOTIFY(UAttributeSetBase, JumpHeight, OldJumpHeight);
+}
+
+void UAttributeSetBase::OnRep_Sanity(const FGameplayAttributeData& OldSanity) const
+{
+	GAMEPLAYATTRIBUTE_REPNOTIFY(UAttributeSetBase, Sanity, OldSanity);
 }
 
 void UAttributeSetBase::OnRep_Health(const FGameplayAttributeData& OldHealth) const

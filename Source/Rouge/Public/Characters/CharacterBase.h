@@ -37,9 +37,12 @@ public:
 	bool bIsBurned;
 	UPROPERTY(ReplicatedUsing=OnRep_IsStunned, BlueprintReadOnly)
 	bool bIsStunned;
+	UPROPERTY(ReplicatedUsing=OnRep_IsHealed, BlueprintReadOnly)
+	bool bIsHealed;
 
 	virtual void BurnTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	virtual void StunTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
+	virtual void HealTagChanged(const FGameplayTag CallbackTag, int32 NewCount);
 	
 protected:
 	virtual void BeginPlay() override;
@@ -57,6 +60,8 @@ protected:
 	virtual void OnRep_IsBurned();
 	UFUNCTION()
 	virtual void OnRep_IsStunned();
+	UFUNCTION()
+	virtual void OnRep_IsHealed();
 
 	/** Begin Ability System */
 	UPROPERTY()
@@ -72,5 +77,7 @@ protected:
 	TObjectPtr<class UDebuffNiagaraComponent> BurnDebuffComponent;
 	UPROPERTY(VisibleAnywhere)
 	TObjectPtr<class UDebuffNiagaraComponent> StunDebuffComponent;
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UDebuffNiagaraComponent> HealBuffComponent;
 	/** End Ability System */
 };

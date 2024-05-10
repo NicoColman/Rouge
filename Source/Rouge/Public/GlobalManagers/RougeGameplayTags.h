@@ -55,6 +55,7 @@ public:
 	FGameplayTag StateTag_Player_Sprinting;
 	FGameplayTag StateTag_Player_AbleEquip;
 	FGameplayTag StateTag_Player_Dashing;
+	FGameplayTag StateTag_Player_Healing;
 	/** End State Tags */
 
 	
@@ -104,6 +105,7 @@ public:
 	FGameplayTag CooldownTag_Dash;
 	FGameplayTag CooldownTag_Fireball;
 	FGameplayTag CooldownTag_Shockwave;
+	FGameplayTag CooldownTag_Heal;
 	/** End Cooldown Tags */
 
 	/** Begin GameplayCue Tags */
@@ -116,6 +118,7 @@ public:
 	FGameplayTag GameplayCue_Ability_PickupLoop;
 	FGameplayTag GameplayCue_Ability_RegenerationLoop;
 	FGameplayTag GameplayCue_Ability_ShockedLoop;
+	FGameplayTag GameplayCue_Ability_HealLoop;
 	/** End GameplayCue Tags */
 
 	/** Begin Event Tags */
@@ -131,6 +134,11 @@ public:
 	TMap<FGameplayTag, FGameplayTag> DamageTypesToResistances;
 	/** End Damage Tags */
 
+	/** Begin Buff Tags */
+	FGameplayTag Buff;
+	FGameplayTag Buff_Heal;
+	/** End Buff Tags */
+	
 	/** Begin Debuff Tags */
 	FGameplayTag Debuff;
 	FGameplayTag Debuff_Burn;

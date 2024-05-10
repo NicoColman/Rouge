@@ -28,6 +28,7 @@ protected:
 	virtual void InitializeAbilitySystem() override;
 	virtual void OnRep_IsBurned() override;
 	virtual void OnRep_IsStunned() override;
+	virtual void OnRep_IsHealed() override;
 	/** End CharacterBase */
 
 	/** Being Basic Character Components */
