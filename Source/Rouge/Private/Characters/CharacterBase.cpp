@@ -9,6 +9,8 @@
 #include "AbilitySystemComponent.h"
 #include "PaperZDAnimationComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "GASManager/Debuffs/DebuffNiagaraComponent.h"
+#include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 
 
@@ -26,6 +28,10 @@ ACharacterBase::ACharacterBase()
 	GetSprite()->SetRelativeRotation(FRotator(0.f, -270.f, 0.f));
 	GetSprite()->SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
 	GetSprite()->SetGenerateOverlapEvents(true);
+
+	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffComponent"));
+	BurnDebuffComponent->SetupAttachment(GetSprite());
+	BurnDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Burn;
 }
 
 void ACharacterBase::BeginPlay()
@@ -68,6 +74,16 @@ void ACharacterBase::ApplyEffectToSelf(TSubclassOf<UGameplayEffect> const Effect
 	{
 		AbilitySystemComponent->ApplyGameplayEffectSpecToTarget(*SpecHandle.Data.Get(), AbilitySystemComponent);
 	}
+}
+
+void ACharacterBase::Death()
+{
+	MulticastOnDeath();
+}
+
+void ACharacterBase::MulticastOnDeath_Implementation()
+{
+	OnDeath.Broadcast(this);
 }
 
 int32 ACharacterBase::GetCharacterLevel() const

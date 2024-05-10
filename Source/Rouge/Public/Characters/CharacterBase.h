@@ -17,20 +17,29 @@ public:
 	ACharacterBase();
 
 	/** Begin IAbilitySystemInterface */
-	virtual class UAbilitySystemComponent* GetAbilitySystemComponent() const override {return AbilitySystemComponent;}
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override {return AbilitySystemComponent;}
 	/** End IAbilitySystemInterface */
 
 	/** Begin ICharacterBaseInterface */
 	virtual int32 GetCharacterLevel() const override;
 	virtual void SetPlayerWeapon(class AActor* Weapon) override;
 	virtual UCharacterBaseDataAsset* GetCharacterDataAsset() const override {return CharacterDataAsset;}
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() override {return OnASCRegistered;}
+	virtual FOnDeath GetOnDeathDelegate() override {return OnDeath;}
 	/** End ICharacterBaseInterface */
 
+	FOnASCRegistered OnASCRegistered;
+	FOnDeath OnDeath;
+	
 protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "DataAsset")
 	TObjectPtr<class UCharacterBaseDataAsset> CharacterDataAsset;
+
+	virtual void Death();
+	UFUNCTION(NetMulticast, Reliable)
+	virtual void MulticastOnDeath();
 
 	/** Begin Ability System */
 	UPROPERTY()
@@ -41,5 +50,8 @@ protected:
 	virtual void InitializeAttributes();
 	virtual void AddCharacterAbilities();
 	virtual void ApplyEffectToSelf(TSubclassOf<class UGameplayEffect> const Effect, const int32 Level) const;
+
+	UPROPERTY(VisibleAnywhere)
+	TObjectPtr<class UDebuffNiagaraComponent> BurnDebuffComponent;
 	/** End Ability System */
 };

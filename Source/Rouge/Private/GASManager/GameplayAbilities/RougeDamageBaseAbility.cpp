@@ -19,5 +19,8 @@ FDamageEffectParams URougeDamageBaseAbility::MakeDamageEffectParamsFromClassDefa
 	Params.DebuffDuration = DebuffDuration;
 	Params.DebuffDamage = DebuffDamage;
 	Params.DebuffFrequency = DebuffFrequency;
+	Params.DeathImpulseMagnitude = DeathImpulseMagnitude;
+	Params.KnockbackForceMagnitude = KnockbackForceMagnitude;
+	Params.KnockbackChance = KnockbackChance;
 	return Params;
 }

@@ -87,6 +87,72 @@ bool URougeLibrary::IsCriticalHit(const FGameplayEffectContextHandle& EffectCont
 	return false;
 }
 
+bool URougeLibrary::IsSuccessfulDebuff(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->IsSuccessfulDebuff();
+	}
+	return false;
+}
+
+float URougeLibrary::GetDebuffDamage(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->GetDebuffDamage();
+	}
+	return 0.f;
+}
+
+float URougeLibrary::GetDebuffDuration(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->GetDebuffDuration();
+	}
+	return 0.f;
+}
+
+float URougeLibrary::GetDebuffFrequency(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->GetDebuffFrequency();
+	}
+	return 0.f;
+}
+
+FGameplayTag URougeLibrary::GetDamageType(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		if (RougeEffectContext->GetDamageType().IsValid())
+		{
+			return *RougeEffectContext->GetDamageType();
+		}
+	}
+	return FGameplayTag();
+}
+
+FVector URougeLibrary::GetDeathImpulse(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->GetDeathImpulse();
+	}
+	return FVector::ZeroVector;
+}
+
+FVector URougeLibrary::GetKnockbackForce(const FGameplayEffectContextHandle& EffectContext)
+{
+	if (const FRougeGameplayEffectContext* RougeEffectContext = static_cast<const FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		return RougeEffectContext->GetKnockbackForce();
+	}
+	return FVector::ZeroVector;
+}
+
 void URougeLibrary::SetBlockedHit(FGameplayEffectContextHandle& EffectContext, bool bBlockedHit)
 {
 	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
@@ -103,15 +169,74 @@ void URougeLibrary::SetCriticalHit(FGameplayEffectContextHandle& EffectContext, 
 	}
 }
 
+void URougeLibrary::SetSuccessfulDebuff(FGameplayEffectContextHandle& EffectContext, bool bSuccessfulDebuff)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetIsSuccessfulDebuff(bSuccessfulDebuff);
+	}
+}
+
+void URougeLibrary::SetDebuffDamage(FGameplayEffectContextHandle& EffectContext, float DebuffDamage)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetDebuffDamage(DebuffDamage);
+	}
+}
+
+void URougeLibrary::SetDebuffDuration(FGameplayEffectContextHandle& EffectContext, float DebuffDuration)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetDebuffDuration(DebuffDuration);
+	}
+}
+
+void URougeLibrary::SetDebuffFrequency(FGameplayEffectContextHandle& EffectContext, float DebuffFrequency)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetDebuffFrequency(DebuffFrequency);
+	}
+}
+
+void URougeLibrary::SetDamageType(FGameplayEffectContextHandle& EffectContext, const FGameplayTag& DamageType)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		const TSharedPtr<FGameplayTag> SharedDamageType = MakeShared<FGameplayTag>(DamageType);
+		RougeEffectContext->SetDamageType(SharedDamageType);
+	}
+}
+
+void URougeLibrary::SetDeathImpulse(FGameplayEffectContextHandle& EffectContext, FVector DeathImpulse)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetDeathImpulse(DeathImpulse);
+	}
+}
+
+void URougeLibrary::SetKnockbackForce(FGameplayEffectContextHandle& EffectContext, FVector KnockbackForce)
+{
+	if (FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(EffectContext.Get()))
+	{
+		RougeEffectContext->SetKnockbackForce(KnockbackForce);
+	}
+}
+
 FGameplayEffectContextHandle URougeLibrary::ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams)
 {
 	const FRougeGameplayTags& RougeGameplayTags = FRougeGameplayTags::Get();
 	const AActor* SourceActor = DamageEffectParams.SourceAbilitySystemComponent->GetAvatarActor();
-
+	
 	FGameplayEffectContextHandle EffectContext = DamageEffectParams.SourceAbilitySystemComponent->MakeEffectContext();
 	EffectContext.AddSourceObject(SourceActor);
 	const FGameplayEffectSpecHandle SpecHandle = DamageEffectParams.SourceAbilitySystemComponent->MakeOutgoingSpec(DamageEffectParams.DamageEffectClass, DamageEffectParams.AbilityLevel, EffectContext);
-
+	SetDeathImpulse(EffectContext, DamageEffectParams.DeathImpulse);
+	SetKnockbackForce(EffectContext, DamageEffectParams.KnockbackForce);
+	
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, DamageEffectParams.DamageType, DamageEffectParams.BaseDamage);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Chance, DamageEffectParams.DebuffChance);
 	UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, RougeGameplayTags.Debuff_Duration, DamageEffectParams.DebuffDuration);

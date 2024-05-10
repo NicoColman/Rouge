@@ -15,6 +15,7 @@ class ROUGE_API UASCBase : public UAbilitySystemComponent, public IRougeAbilityS
 {
 	GENERATED_BODY()
 
+public:
 	virtual void AbilityActorInfoSet() override;
 	
 	virtual void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities) override;
