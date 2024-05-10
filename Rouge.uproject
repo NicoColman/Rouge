@@ -11,7 +11,8 @@
 			"AdditionalDependencies": [
 				"PaperZD",
 				"GameplayAbilities",
-				"Engine"
+				"Engine",
+				"Niagara"
 			]
 		}
 	],

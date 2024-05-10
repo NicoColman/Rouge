@@ -140,7 +140,7 @@ public:
 	FGameplayTag Debuff_Duration;
 	FGameplayTag Debuff_Frequency;
 	
-	TMap<FGameplayTag, FGameplayTag> DebuffsToResistances;
+	TMap<FGameplayTag, FGameplayTag> DamageTypesToDebuffs;
 	/** End Debuff Tags */
 
 	

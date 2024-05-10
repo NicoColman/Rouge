@@ -34,6 +34,14 @@ protected:
 	float DebuffDamage = 5.f;
 	UPROPERTY(EditDefaultsOnly, Category = "Damage")
 	float DebuffFrequency = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float DeathImpulseMagnitude = 1000.f;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float KnockbackForceMagnitude = 1000.f;
+	UPROPERTY(EditDefaultsOnly, Category = "Damage")
+	float KnockbackChance = 0.f;
 	
 	UPROPERTY(EditAnywhere, Category = "Damage")
 	TSubclassOf<UGameplayEffect> DamageEffectClass;

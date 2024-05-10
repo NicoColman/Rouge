@@ -328,8 +328,8 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("Debuff.Stun"),
 		FString("Debuff Stun")
 		);
-	GameplayTags.DebuffsToResistances.Add(GameplayTags.Damage_Fire,GameplayTags.Debuff_Burn);
-	GameplayTags.DebuffsToResistances.Add(GameplayTags.Damage_Lightning,GameplayTags.Debuff_Stun);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Fire,GameplayTags.Debuff_Burn);
+	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Lightning,GameplayTags.Debuff_Stun);
 	/** End Debuff Tags */
 
 	/**

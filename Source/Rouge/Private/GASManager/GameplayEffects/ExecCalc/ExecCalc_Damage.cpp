@@ -20,8 +20,6 @@ struct RougeDamageStatics
 	DECLARE_ATTRIBUTE_CAPTUREDEF(CriticalHitDamage);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(FireResistance);
 	DECLARE_ATTRIBUTE_CAPTUREDEF(LightningResistance);
-
-	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
 	
 	RougeDamageStatics()
 	{
@@ -33,17 +31,6 @@ struct RougeDamageStatics
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, CriticalHitDamage, Source, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, FireResistance, Target, false);
 		DEFINE_ATTRIBUTE_CAPTUREDEF(UAttributeSetBase, LightningResistance, Target, false);
-
-		const FRougeGameplayTags& RougeTags = FRougeGameplayTags::Get();
-		
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_Armor, ArmorDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_ArmorPenetration, ArmorPenetrationDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_BlockChance, BlockChanceDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitChance, CriticalHitChanceDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitResistance, CriticalHitResistanceDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Secondary_CriticalHitDamage, CriticalHitDamageDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Resistance_Fire, FireResistanceDef);
-		TagsToCaptureDefs.Add(RougeTags.Attribute_Resistance_Lightning, LightningResistanceDef);
 	}
 };
 
@@ -66,8 +53,20 @@ UExecCalc_Damage::UExecCalc_Damage()
 }
 
 void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
-	FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
+                                              FGameplayEffectCustomExecutionOutput& OutExecutionOutput) const
 {
+	TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition> TagsToCaptureDefs;
+	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
+		
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_Armor, DamageStatics().ArmorDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_ArmorPenetration, DamageStatics().ArmorPenetrationDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_BlockChance, DamageStatics().BlockChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_CriticalHitChance, DamageStatics().CriticalHitChanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_CriticalHitResistance, DamageStatics().CriticalHitResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Secondary_CriticalHitDamage, DamageStatics().CriticalHitDamageDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Resistance_Fire, DamageStatics().FireResistanceDef);
+	TagsToCaptureDefs.Add(GameplayTags.Attribute_Resistance_Lightning, DamageStatics().LightningResistanceDef);
+	
 	const UAbilitySystemComponent* SourceASC = ExecutionParams.GetSourceAbilitySystemComponent();
 	const UAbilitySystemComponent* TargetASC = ExecutionParams.GetTargetAbilitySystemComponent();
 
@@ -85,14 +84,17 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	EvaluationParameters.SourceTags = SourceTags;
 	EvaluationParameters.TargetTags = TargetTags;
 
+	// Debuffs
+	DetermineDebuff(ExecutionParams, Spec, EvaluationParameters, TagsToCaptureDefs);
+
 	// Get Damage Set by Caller Magnitude
 	float Damage = 0.f;
-	for (const auto& Pair : FRougeGameplayTags::Get().DamageTypesToResistances)
+	for (const auto& Pair : GameplayTags.DamageTypesToResistances)
 	{
 		const FGameplayTag ResistanceType = Pair.Value;
 
-		checkf(RougeDamageStatics().TagsToCaptureDefs.Contains(ResistanceType), TEXT("ResistanceType not found in TagsToCaptureDefs"));
-		const FGameplayEffectAttributeCaptureDefinition DamageCaptureDef = RougeDamageStatics().TagsToCaptureDefs[ResistanceType];
+		checkf(TagsToCaptureDefs.Contains(ResistanceType), TEXT("ResistanceType not found in TagsToCaptureDefs"));
+		const FGameplayEffectAttributeCaptureDefinition DamageCaptureDef = TagsToCaptureDefs[ResistanceType];
 
 		float DamageTypeValue = Spec.GetSetByCallerMagnitude(Pair.Key);
 		
@@ -159,4 +161,43 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	
 	const FGameplayModifierEvaluatedData EvaluatedData(UAttributeSetBase::GetIncomingDamageAttribute(), EGameplayModOp::Additive, Damage);
 	OutExecutionOutput.AddOutputModifier(EvaluatedData);
+}
+
+void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
+                                       const FGameplayEffectSpec& Spec,
+                                       FAggregatorEvaluateParameters EvaluationParameters,
+                                       const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs)
+const
+{
+	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
+	for (TTuple<FGameplayTag, FGameplayTag> Pair : GameplayTags.DamageTypesToDebuffs)
+	{
+		const FGameplayTag& DamageType = Pair.Key
+		;
+		const float TypeDamage = Spec.GetSetByCallerMagnitude(DamageType, false, -1.f);
+		if (TypeDamage > 0.9f)
+		{
+			const float SourceDebuffChange = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Chance, false, -1.f);
+
+			float TargetDebuffResistance = 0.f;
+			const FGameplayTag& ResistanceTag = GameplayTags.DamageTypesToResistances[DamageType];
+			ExecutionParams.AttemptCalculateCapturedAttributeMagnitude(TagsToDefs[ResistanceTag], EvaluationParameters, TargetDebuffResistance);
+			TargetDebuffResistance = FMath::Max<float>(TargetDebuffResistance, 0.f);
+			const float EffectiveDebuffChange = SourceDebuffChange * (100 - TargetDebuffResistance) / 100.f;
+			const bool bDebuff = FMath::RandRange(1, 100) < EffectiveDebuffChange;
+			if (!bDebuff) return;
+
+			FGameplayEffectContextHandle ContextHandle = Spec.GetContext();
+			URougeLibrary::SetSuccessfulDebuff(ContextHandle, true);
+			URougeLibrary::SetDamageType(ContextHandle, DamageType);
+
+			const float DebuffDamage = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Damage, false, -1.f);
+			const float DebuffDuration = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Duration, false, -1.f);
+			const float DebuffFrequency = Spec.GetSetByCallerMagnitude(GameplayTags.Debuff_Frequency, false, -1.f);
+
+			URougeLibrary::SetDebuffDamage(ContextHandle, DebuffDamage);
+			URougeLibrary::SetDebuffDuration(ContextHandle, DebuffDuration);
+			URougeLibrary::SetDebuffFrequency(ContextHandle, DebuffFrequency);
+		}
+	}
 }

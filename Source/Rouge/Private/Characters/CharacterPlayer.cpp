@@ -64,6 +64,7 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	{
 		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 		AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
+		OnASCRegistered.Broadcast(AbilitySystemComponent);
 	}
 	if (AbilitySystemComponent)
 	{

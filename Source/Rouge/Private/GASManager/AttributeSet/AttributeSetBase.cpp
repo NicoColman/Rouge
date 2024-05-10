@@ -12,6 +12,7 @@
 #include "GameFramework/GameModeBase.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
+#include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 
 UAttributeSetBase::UAttributeSetBase()
 {
@@ -105,34 +106,14 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
 
+	// TODO: Check if Target character is Dead, maybe via Interface
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingDamageAttribute())
 	{
-		const float LocalIncomingDamage = GetIncomingDamage();
-		SetIncomingDamage(0.f);
-		if (LocalIncomingDamage < 0.f) return;
-		const float NewHealth = GetHealth() - LocalIncomingDamage;
-		SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
-		const bool bFatal = NewHealth <= 0.f;
-		if (bFatal)
-		{
-			Props.TargetCharacter->Destroy();
-			if (IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode()))
-			{
-				GameMode->RequestRespawn(Props.TargetController);
-			}
-		}
-		else
-		{
-			FGameplayTagContainer TagContainer;
-			//TagContainer.AddTag(FRougeGameplayTags::Get().Effect_HitReact);
-			Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
-		}
-		const bool bBlock = URougeLibrary::IsBlockedHit(Props.EffectContextHandle);
-		const bool bCritical = URougeLibrary::IsCriticalHit(Props.EffectContextHandle); 
+		HandleIncomingDamage(Props);
 	}
 }
 
@@ -168,6 +149,86 @@ void UAttributeSetBase::SetEffectProperties(const FGameplayEffectModCallbackData
 	if (Data.EvaluatedData.Attribute == GetSpeedAttribute())
 	{
 		Props.TargetCharacter->GetCharacterMovement()->MaxWalkSpeed = GetSpeed();
+	}
+}
+
+void UAttributeSetBase::HandleIncomingDamage(const FEffectProperties& Props)
+{
+	const float LocalIncomingDamage = GetIncomingDamage();
+	SetIncomingDamage(0.f);
+	if (LocalIncomingDamage < 0.f) return;
+	const float NewHealth = GetHealth() - LocalIncomingDamage;
+	SetHealth(FMath::Clamp(NewHealth, 0.f, GetMaxHealth()));
+	if (NewHealth <= 0.f)
+	{
+		Props.TargetCharacter->Destroy();
+		if (IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode()))
+		{
+			GameMode->RequestRespawn(Props.TargetController);
+		}
+	}
+	else
+	{
+		FGameplayTagContainer TagContainer;
+		//TagContainer.AddTag(FRougeGameplayTags::Get().Effect_HitReact);
+		Props.TargetASC->TryActivateAbilitiesByTag(TagContainer);
+		const FVector& KnockbackForce = URougeLibrary::GetKnockbackForce(Props.EffectContextHandle);
+		if (!KnockbackForce.IsNearlyZero(1.f))
+		{
+			Props.TargetCharacter->LaunchCharacter(KnockbackForce, true, true);
+		}
+	}
+	const bool bBlock = URougeLibrary::IsBlockedHit(Props.EffectContextHandle);
+	const bool bCritical = URougeLibrary::IsCriticalHit(Props.EffectContextHandle);
+
+	if (URougeLibrary::IsSuccessfulDebuff(Props.EffectContextHandle))
+	{
+		Debuff(Props);
+	}
+}
+
+void UAttributeSetBase::Debuff(const FEffectProperties& Props)
+{ 
+	FGameplayEffectContextHandle EffectContext = Props.SourceASC->MakeEffectContext();
+	EffectContext.AddSourceObject(Props.SourceAvatarActor);
+	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
+
+	const FGameplayTag DamageType = URougeLibrary::GetDamageType(Props.EffectContextHandle);
+	const float DebuffDamage = URougeLibrary::GetDebuffDamage(Props.EffectContextHandle);
+	const float DebuffDuration = URougeLibrary::GetDebuffDuration(Props.EffectContextHandle);
+	const float DebuffFrequency = URougeLibrary::GetDebuffFrequency(Props.EffectContextHandle);
+	
+	const FString DebuffName = FString::Printf(TEXT("DynamicDebuff_%s"), *DamageType.ToString());
+	UGameplayEffect* Effect = NewObject<UGameplayEffect>(GetTransientPackage(), FName(DebuffName));
+
+	Effect->DurationPolicy = EGameplayEffectDurationType::HasDuration;
+	Effect->Period = DebuffFrequency;
+	Effect->DurationMagnitude = FScalableFloat(DebuffDuration);
+	FInheritedTagContainer TagContainer = FInheritedTagContainer();
+	UTargetTagsGameplayEffectComponent& Component = Effect->FindOrAddComponent<UTargetTagsGameplayEffectComponent>();
+	TagContainer.Added.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	TagContainer.CombinedTags.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+	Component.SetAndApplyTargetTagChanges(TagContainer); 
+	Effect->InheritableOwnedTagsContainer.AddTag(GameplayTags.DamageTypesToDebuffs[DamageType]);
+
+	Effect->StackingType = EGameplayEffectStackingType::AggregateBySource;
+	Effect->StackLimitCount = 1;
+
+	const int32 Index = Effect->Modifiers.Num();
+	Effect->Modifiers.Add(FGameplayModifierInfo());
+	FGameplayModifierInfo& ModifierInfo = Effect->Modifiers[Index];
+
+	ModifierInfo.ModifierMagnitude = FScalableFloat(DebuffDamage);
+	ModifierInfo.ModifierOp = EGameplayModOp::Additive;
+	ModifierInfo.Attribute = GetIncomingDamageAttribute();
+
+	if (const FGameplayEffectSpec* MutableSpec = new FGameplayEffectSpec(Effect, EffectContext, 1.f))
+	{
+		FRougeGameplayEffectContext* RougeEffectContext = static_cast<FRougeGameplayEffectContext*>(MutableSpec->GetContext().Get());
+		const TSharedPtr<FGameplayTag> DebuffDamageType = MakeShareable(new FGameplayTag(DamageType));
+		RougeEffectContext->SetDamageType(DebuffDamageType);
+
+		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
 	}
 }
 

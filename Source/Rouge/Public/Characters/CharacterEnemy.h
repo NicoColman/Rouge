@@ -16,6 +16,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	/** Begin ICharacterBaseInterface */
+	virtual UAbilitySystemComponent* GetAbilitySystemComponent() const override { return AbilitySystemComponent; }
 	virtual int32 GetCharacterLevel() const override { return Level; }
 	/** End ICharacterBaseInterface */
 

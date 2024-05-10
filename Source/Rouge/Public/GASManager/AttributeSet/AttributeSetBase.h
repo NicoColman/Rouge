@@ -248,5 +248,6 @@ public:
 	
 private:
 	void SetEffectProperties(const FGameplayEffectModCallbackData& Data, struct FEffectProperties& Props) const;
-	
+	void HandleIncomingDamage(const FEffectProperties& Props);
+	void Debuff(const FEffectProperties& Props);
 };

@@ -6,6 +6,10 @@
 #include "UObject/Interface.h"
 #include "CharacterBaseInterface.generated.h"
 
+
+DECLARE_MULTICAST_DELEGATE_OneParam(FOnASCRegistered, class UAbilitySystemComponent*);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnDeath, AActor*, DeadActor);
+
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCharacterBaseInterface : public UInterface
@@ -25,4 +29,8 @@ public:
 	virtual int32 GetCharacterLevel() const = 0;
 	virtual void SetPlayerWeapon(class AActor* Weapon) = 0;
 	virtual class UCharacterBaseDataAsset* GetCharacterDataAsset() const = 0;
+
+
+	virtual FOnASCRegistered GetOnASCRegisteredDelegate() = 0;
+	virtual FOnDeath GetOnDeathDelegate() = 0;
 };
