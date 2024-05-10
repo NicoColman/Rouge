@@ -42,7 +42,6 @@ void UPlayerFireBallAbility::GetWeaponAssets()
 
 void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle& TargetDataHandle)
 {
-	if (!GetAvatarActorFromActorInfo()->HasAuthority()) return;
 	const FHitResult& HitData = UAbilitySystemBlueprintLibrary::GetHitResultFromTargetData(TargetDataHandle, 0);
 	
 	const FVector HitLocation = HitData.Location;
@@ -57,13 +56,9 @@ void UPlayerFireBallAbility::OnTargetData(const FGameplayAbilityTargetDataHandle
 		Cast<APawn>(GetOwningActorFromActorInfo()),
 		ESpawnActorCollisionHandlingMethod::AlwaysSpawn
 		);
-
-	APawn* AvatarPawn = Cast<APawn>(GetAvatarActorFromActorInfo());
-	Projectile->SetInstigator(AvatarPawn);
-	Projectile->SetOwner(AvatarPawn);
-
+	
 	Projectile->DamageEffectParams = MakeDamageEffectParamsFromClassDefaults();
-
+	
 	ExecuteCastGameplayCue(Socket);
 	
 	FTimerHandle TimerHandle;

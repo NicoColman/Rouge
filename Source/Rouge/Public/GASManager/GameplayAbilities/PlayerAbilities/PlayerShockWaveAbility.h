@@ -17,11 +17,6 @@ class ROUGE_API UPlayerShockWaveAbility : public URougeDamageBaseAbility
 public:
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
 
-protected:
-	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UGameplayEffect> StunEffectClass;
-
-	void ApplyDamageEffect(AActor* HitActor) const;
-	void ApplyStunEffect(AActor* HitActor) const;\
+private:
 	float GetSphereRadius() const;
 };

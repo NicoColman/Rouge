@@ -9,6 +9,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "GlobalManagers/RougeGameplayTags.h"
+#include "GASManager/Debuffs/DebuffNiagaraComponent.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -64,7 +66,6 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	{
 		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
 		AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
-		OnASCRegistered.Broadcast(AbilitySystemComponent);
 	}
 	if (AbilitySystemComponent)
 	{
@@ -73,6 +74,9 @@ void ACharacterPlayer::InitializeAbilitySystem()
 			AbilitySystemBaseInterface->AbilityActorInfoSet();
 		}
 	}
+	OnASCRegistered.Broadcast(AbilitySystemComponent);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Burn, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::BurnTagChanged);
+	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::StunTagChanged);
 	/*
 	if (IAttributeSetBaseInterface* AttributeSetInterface = Cast<IAttributeSetBaseInterface>(GetPlayerState()))
 	{
@@ -88,4 +92,37 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	}
 	*/
 	InitializeAttributes();
+}
+
+void ACharacterPlayer::OnRep_IsBurned()
+{
+	if (bIsBurned)
+	{
+		BurnDebuffComponent->Activate();
+	}
+	else
+	{
+		BurnDebuffComponent->Deactivate();
+	}
+}
+
+void ACharacterPlayer::OnRep_IsStunned()
+{
+	if (AbilitySystemComponent)
+	{
+		const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
+		FGameplayTagContainer StunTagContainer;
+		StunTagContainer.AddTag(GameplayTags.Debuff_Stun);
+		StunTagContainer.AddTag(GameplayTags.Player_Block_InputHeld);
+		StunTagContainer.AddTag(GameplayTags.Player_Block_InputPressed);
+		StunTagContainer.AddTag(GameplayTags.Player_Block_InputReleased);
+		if (bIsStunned)
+		{
+			AbilitySystemComponent->AddLooseGameplayTags(StunTagContainer);
+		}
+		else
+		{
+			AbilitySystemComponent->RemoveLooseGameplayTags(StunTagContainer);
+		}
+	}
 }

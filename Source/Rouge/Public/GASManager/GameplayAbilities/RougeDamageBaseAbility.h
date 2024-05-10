@@ -17,7 +17,7 @@ class ROUGE_API URougeDamageBaseAbility : public UInputBaseAbility
 	GENERATED_BODY()
 
 public:
-	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr) const; 
+	FDamageEffectParams MakeDamageEffectParamsFromClassDefaults(AActor* TargetActor = nullptr /* TargetASC*/) const; 
 	
 protected:
 	/** The "EditAnywhere" is ONLY used for Abilities with no DataAssets, i.e. ShockWave */

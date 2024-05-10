@@ -302,6 +302,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	/** End Damage Tags */
 
 	/** Begin Debuff Tags */
+	GameplayTags.Debuff = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff"),
+		FString("Debuff")
+		);
 	GameplayTags.Debuff_Chance = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Debuff.Chance"),
 		FString("Debuff Chance")

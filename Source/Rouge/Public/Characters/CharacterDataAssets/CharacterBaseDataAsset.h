@@ -20,6 +20,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TSubclassOf<class UPaperZDAnimInstance> CharacterAnimInstance;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
+	TObjectPtr<class UNiagaraSystem> BurnSystem;
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
+	TObjectPtr<class UNiagaraSystem> StunSystem;
+
 	/** Gas */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;

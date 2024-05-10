@@ -132,6 +132,7 @@ public:
 	/** End Damage Tags */
 
 	/** Begin Debuff Tags */
+	FGameplayTag Debuff;
 	FGameplayTag Debuff_Burn;
 	FGameplayTag Debuff_Stun;
 
