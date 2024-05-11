@@ -74,10 +74,10 @@ protected:
 	virtual void ApplyEffectToSelf(TSubclassOf<class UGameplayEffect> const Effect, const int32 Level) const;
 
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UDebuffNiagaraComponent> BurnDebuffComponent;
+	TObjectPtr<class UAttachedNiagaraComponent> BurnComponent;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UDebuffNiagaraComponent> StunDebuffComponent;
+	TObjectPtr<UAttachedNiagaraComponent> StunComponent;
 	UPROPERTY(VisibleAnywhere)
-	TObjectPtr<class UDebuffNiagaraComponent> HealBuffComponent;
+	TObjectPtr<UAttachedNiagaraComponent> HealComponent;
 	/** End Ability System */
 };

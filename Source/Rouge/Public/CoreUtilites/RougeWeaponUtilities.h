@@ -13,7 +13,7 @@ enum class EWeaponTypes : uint8
 	EWT_MAX UMETA(DisplayName = "DefaultMAX")
 };
 
-USTRUCT()
+USTRUCT(BlueprintType)
 struct FAbilityBaseCues
 {
 	GENERATED_BODY()

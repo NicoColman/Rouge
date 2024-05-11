@@ -9,8 +9,8 @@
 #include "AbilitySystemComponent.h"
 #include "PaperZDAnimationComponent.h"
 #include "Components/CapsuleComponent.h"
+#include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GASManager/Debuffs/DebuffNiagaraComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 #include "Net/UnrealNetwork.h"
@@ -31,17 +31,17 @@ ACharacterBase::ACharacterBase()
 	GetSprite()->SetRelativeScale3D(FVector(2.f, 2.f, 2.f));
 	GetSprite()->SetGenerateOverlapEvents(true);
 
-	BurnDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("BurnDebuffComponent"));
-	BurnDebuffComponent->SetupAttachment(GetSprite());
-	BurnDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Burn;
+	BurnComponent = CreateDefaultSubobject<UAttachedNiagaraComponent>(TEXT("BurnComponent"));
+	BurnComponent->SetupAttachment(GetSprite());
+	BurnComponent->ComponentTag = FRougeGameplayTags::Get().Debuff_Burn;
 
-	StunDebuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("StunDebuffComponent"));
-	StunDebuffComponent->SetupAttachment(GetSprite());
-	StunDebuffComponent->DebuffTag = FRougeGameplayTags::Get().Debuff_Stun;
+	StunComponent = CreateDefaultSubobject<UAttachedNiagaraComponent>(TEXT("StunComponent"));
+	StunComponent->SetupAttachment(GetSprite());
+	StunComponent->ComponentTag = FRougeGameplayTags::Get().Debuff_Stun;
 
-	HealBuffComponent = CreateDefaultSubobject<UDebuffNiagaraComponent>(TEXT("HealBuffComponent"));
-	HealBuffComponent->SetupAttachment(GetSprite());
-	HealBuffComponent->DebuffTag = FRougeGameplayTags::Get().Buff_Heal;
+	HealComponent = CreateDefaultSubobject<UAttachedNiagaraComponent>(TEXT("HealComponent"));
+	HealComponent->SetupAttachment(GetSprite());
+	HealComponent->ComponentTag = FRougeGameplayTags::Get().Buff_Heal;
 
 	bIsBurned = false;
 	bIsStunned = false;
@@ -54,6 +54,7 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ACharacterBase, bIsBurned);
 	DOREPLIFETIME(ACharacterBase, bIsStunned);
+	DOREPLIFETIME(ACharacterBase, bIsHealed);
 }
 
 void ACharacterBase::BeginPlay()
@@ -63,9 +64,12 @@ void ACharacterBase::BeginPlay()
 	if (!CharacterDataAsset) return;
 	GetSprite()->SetFlipbook(CharacterDataAsset->CharacterFlipbook);
 	GetAnimationComponent()->SetAnimInstanceClass(CharacterDataAsset->CharacterAnimInstance);
-	BurnDebuffComponent->SetAsset(CharacterDataAsset->BurnSystem);
-	StunDebuffComponent->SetAsset(CharacterDataAsset->StunSystem);
-	HealBuffComponent->SetAsset(CharacterDataAsset->HealSystem);
+	//BurnComponent->SetAsset(CharacterDataAsset->AttachedNiagaraSystems.FindRef(EAttachedNiagaraSystems::ANS_Burned).AbilityParticles);
+	
+	BurnComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Burned]);
+	StunComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Stunned]);
+	HealComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Healed]);
+	
 }
 
 void ACharacterBase::InitializeAbilitySystem()

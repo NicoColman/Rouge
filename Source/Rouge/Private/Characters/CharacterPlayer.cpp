@@ -9,8 +9,8 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
-#include "GASManager/Debuffs/DebuffNiagaraComponent.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -97,18 +97,12 @@ void ACharacterPlayer::InitializeAbilitySystem()
 
 void ACharacterPlayer::OnRep_IsBurned()
 {
-	if (bIsBurned)
-	{
-		BurnDebuffComponent->Activate();
-	}
-	else
-	{
-		BurnDebuffComponent->Deactivate();
-	}
+	BurnComponent->ActivateComponents(bIsHealed);
 }
 
 void ACharacterPlayer::OnRep_IsStunned()
 {
+	// Here we don't use "StunComponent->ActivateComponents(bIsStunned);" because we are already replicating the FGameplayTags
 	if (AbilitySystemComponent)
 	{
 		const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
@@ -130,12 +124,5 @@ void ACharacterPlayer::OnRep_IsStunned()
 
 void ACharacterPlayer::OnRep_IsHealed()
 {
-	if (bIsHealed)
-	{
-		HealBuffComponent->Activate();
-	}
-	else
-	{
-		HealBuffComponent->Deactivate();
-	}
+	HealComponent->ActivateComponents(bIsHealed);
 }
