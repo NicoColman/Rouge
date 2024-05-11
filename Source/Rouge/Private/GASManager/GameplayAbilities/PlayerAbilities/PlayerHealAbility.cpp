@@ -9,10 +9,12 @@
 #include "GASManager/EffectActors/BasicSphereEffectActor.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Abilities/Tasks/AbilityTask_WaitInputRelease.h"
+#include "GlobalManagers/RougeGameplayTags.h"
+
 
 UPlayerHealAbility::UPlayerHealAbility()
 {
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 }
 
 void UPlayerHealAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -21,10 +23,14 @@ void UPlayerHealAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 {
 	Super::ActivateAbility(Handle, ActorInfo, ActivationInfo, TriggerEventData);
 	
-	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
-	SphereComponent->SetSphereRadius(GetSphereRadius());
+	UAbilityTask_WaitInputRelease* WaitInputRelease = UAbilityTask_WaitInputRelease::WaitInputRelease(this);
+	WaitInputRelease->OnRelease.AddDynamic(this, &UPlayerHealAbility::WaitInputReleased);
+	WaitInputRelease->ReadyForActivation();
+
+	float Timer = HealTimer.GetValueAtLevel(GetAbilityLevel());
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerHealAbility::EndAbilityAndClearHandle, Timer, false);
+	
 	AActor* AvatarActor = GetAvatarActorFromActorInfo();
-	FVector StartLocation = AvatarActor->GetActorLocation();
 
 	FTransform SpawnTransform;
 	SpawnTransform.SetLocation(AvatarActor->GetActorLocation());
@@ -40,39 +46,31 @@ void UPlayerHealAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 		FGameplayEffectContextHandle EffectContext = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
 		EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
 		const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(HealEffectClass, GetAbilityLevel(), EffectContext);
+		UAbilitySystemBlueprintLibrary::AssignTagSetByCallerMagnitude(SpecHandle, FRougeGameplayTags::Get().SetByCaller_Ability_HealAmount, HealAmount.GetValueAtLevel(GetAbilityLevel()));
 		SphereActor->SphereComponent->SetSphereRadius(GetSphereRadius());
 		SphereActor->EffectSpecToApply = SpecHandle;
 		
 		SphereActor->FinishSpawning(SpawnTransform);
 	}
-	if (ACharacter* AvatarCharacter = Cast<ACharacter>(AvatarActor))
+	if (const ACharacter* AvatarCharacter = Cast<ACharacter>(AvatarActor))
 	{
 		AvatarCharacter->GetCharacterMovement()->SetMovementMode(MOVE_None);
 	}
 }
 
-void UPlayerHealAbility::InputReleased(const FGameplayAbilitySpecHandle Handle,
-	const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo)
+void UPlayerHealAbility::WaitInputReleased(float TimeHeld)
 {
-	Super::InputReleased(Handle, ActorInfo, ActivationInfo);
+	EndAbilityAndClearHandle();
+}
 
+void UPlayerHealAbility::EndAbilityAndClearHandle()
+{
+	TimerHandle.Invalidate();
+	ApplyCooldown(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo());
 	SphereActor->Destroy();
 	Cast<ACharacter>(GetAvatarActorFromActorInfo())->GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 	EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 }
-
-void UPlayerHealAbility::OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-                                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-{
-	if (UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(OtherActor))
-	{
-		FGameplayEffectContextHandle EffectContext = GetAbilitySystemComponentFromActorInfo()->MakeEffectContext();
-		EffectContext.AddSourceObject(GetAvatarActorFromActorInfo());
-		const FGameplayEffectSpecHandle SpecHandle = GetAbilitySystemComponentFromActorInfo()->MakeOutgoingSpec(HealEffectClass, GetAbilityLevel(), EffectContext);
-		TargetASC->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data.Get());
-	}
-}
-
 
 float UPlayerHealAbility::GetSphereRadius() const
 {

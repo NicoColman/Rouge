@@ -127,6 +127,10 @@ public:
 	FGameplayTag Event_Enemy_HitReact;
 	/** End Event Tags */
 
+	/** SetByCaller Tags */
+	FGameplayTag SetByCaller_Ability_HealAmount;
+	/** End SetByCaller Tags */
+
 	/** Begin Damage Tags */
 	FGameplayTag Damage;
 	FGameplayTag Damage_Fire;

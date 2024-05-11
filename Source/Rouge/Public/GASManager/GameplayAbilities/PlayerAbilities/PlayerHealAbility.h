@@ -17,17 +17,21 @@ class ROUGE_API UPlayerHealAbility : public UInputBaseAbility
 public:
 	UPlayerHealAbility();
 	virtual void ActivateAbility(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo, const FGameplayEventData* TriggerEventData) override;
-	virtual void InputReleased(const FGameplayAbilitySpecHandle Handle, const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo) override;
-	
+
 	UFUNCTION()
-	void OnSphereOverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+	void WaitInputReleased(float TimeHeld);
+	void EndAbilityAndClearHandle();
+	
 protected:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<class UGameplayEffect> HealEffectClass;
-	
+	UPROPERTY(EditDefaultsOnly)
+	FScalableFloat HealTimer;
+	UPROPERTY(EditDefaultsOnly)
+	FScalableFloat HealAmount;
 private:
 	float GetSphereRadius() const;
-	TObjectPtr<class USphereComponent> SphereComponent;
 	UPROPERTY()
 	class ABasicSphereEffectActor* SphereActor;
+	FTimerHandle TimerHandle;
 };
