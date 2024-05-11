@@ -41,6 +41,5 @@ protected:
 	virtual void Destroyed() override;
 
 private:
-	FActiveGameplayEffectHandle ActiveEffectHandle;
-
+	TMap<FActiveGameplayEffectHandle, UAbilitySystemComponent*> ActiveEffectsMap;
 };

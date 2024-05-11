@@ -296,6 +296,13 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		);
 	/** End Event Tags */
 
+	/** SetByCaller Tags */
+	GameplayTags.SetByCaller_Ability_HealAmount = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("SetByCaller.Ability.HealAmount"),
+		FString("Set By Caller Ability Heal Amount")
+		);
+	/** End SetByCaller Tags */
+
 	/** Begin Damage Tags */
 	GameplayTags.Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Damage"),

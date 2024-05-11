@@ -87,5 +87,4 @@ void UPlayerFireBallAbility::ExecuteCastGameplayCue(const FVector& Socket) const
 	CueParams.AggregatedSourceTags.AddTag(WeaponTag);
 	CueParams.AbilityLevel = 1.f;
 	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(GameplayTags.GameplayCue_Ability_Spell_Cast, CueParams);
-
 }
