@@ -12,6 +12,7 @@
 #include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
+#include "InputManager/PlayerController/RougePlayerController.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 #include "Net/UnrealNetwork.h"
 
@@ -55,6 +56,7 @@ void ACharacterBase::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACharacterBase, bIsBurned);
 	DOREPLIFETIME(ACharacterBase, bIsStunned);
 	DOREPLIFETIME(ACharacterBase, bIsHealed);
+	DOREPLIFETIME(ACharacterBase, Directionality);
 }
 
 void ACharacterBase::BeginPlay()
@@ -64,12 +66,16 @@ void ACharacterBase::BeginPlay()
 	if (!CharacterDataAsset) return;
 	GetSprite()->SetFlipbook(CharacterDataAsset->CharacterFlipbook);
 	GetAnimationComponent()->SetAnimInstanceClass(CharacterDataAsset->CharacterAnimInstance);
-	//BurnComponent->SetAsset(CharacterDataAsset->AttachedNiagaraSystems.FindRef(EAttachedNiagaraSystems::ANS_Burned).AbilityParticles);
 	
 	BurnComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Burned]);
 	StunComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Stunned]);
 	HealComponent->SetNiagaraAssets(CharacterDataAsset->AttachedNiagaraSystems[EAttachedNiagaraSystems::Healed]);
 	
+}
+
+void ACharacterBase::SetDirectionality_Implementation(const FVector2D Direction)
+{
+	Directionality = FVector2D(Direction.Y, Direction.X);
 }
 
 void ACharacterBase::InitializeAbilitySystem()
@@ -81,7 +87,6 @@ void ACharacterBase::InitializeAttributes()
 	ApplyEffectToSelf(CharacterDataAsset->PrimaryAttributeEffect, 1);
 	ApplyEffectToSelf(CharacterDataAsset->SecondaryAttributeEffect, 1);
 	ApplyEffectToSelf(CharacterDataAsset->VitalAttributeEffect, 1);
-	
 }
 
 void ACharacterBase::AddCharacterAbilities()

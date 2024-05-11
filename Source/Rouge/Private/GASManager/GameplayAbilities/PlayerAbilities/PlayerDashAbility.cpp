@@ -7,7 +7,6 @@
 #include "Abilities/Tasks/AbilityTask_ApplyRootMotionConstantForce.h"
 #include "GameFramework/RootMotionSource.h"
 #include "GlobalManagers/RougeGameplayTags.h"
-#include "InputManager/PlayerController/RougePlayerController.h"
 
 
 void UPlayerDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
@@ -20,12 +19,17 @@ void UPlayerDashAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle
 	
 	ExecuteGameplayCue();
 	
-	const FVector2D Vector = Cast<ARougePlayerController>(ActorInfo->PlayerController)->Directionality;
-	const FVector Direction = FVector(Vector.X, Vector.Y, 0.f).GetSafeNormal();
-	constexpr float Strength = 2000.f;
-	constexpr float Duration = 0.2f;
-	const float Velocity = GetAvatarActorFromActorInfo()->GetVelocity().Length();
-	const FVector MomentumVelocity = Direction * (Velocity * 1.2f);
+	FVector Direction = GetAvatarActorFromActorInfo()->GetVelocity();
+	float Strength = 100.f;
+	if (Direction.IsNearlyZero())
+	{
+		Direction = GetAvatarActorFromActorInfo()->GetActorForwardVector();
+		Strength = 8000.f;
+	}
+	constexpr float Duration = 0.05f;
+	const float Velocity = Direction.Length();
+	const float VelocityMultiplier = FMath::Sqrt(FMath::Loge(Velocity)) * 0.619f;
+	const FVector MomentumVelocity = Direction * VelocityMultiplier;
 	
 	UAbilityTask_ApplyRootMotionConstantForce* ApplyRootMotionConstantForce = UAbilityTask_ApplyRootMotionConstantForce::ApplyRootMotionConstantForce(
 		this,

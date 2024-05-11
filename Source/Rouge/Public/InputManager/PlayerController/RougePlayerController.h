@@ -18,10 +18,6 @@ class ROUGE_API ARougePlayerController : public APlayerController
 
 public:
 	ARougePlayerController();
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	UPROPERTY(Replicated)
-	FVector2D Directionality;
 
 protected:
 	virtual void BeginPlay() override;
@@ -30,21 +26,27 @@ protected:
 private:
 	UPROPERTY()
 	TObjectPtr<APawn> CachedPawn;
+	UPROPERTY()
+	class ACharacterBase* CachedCharacter;
+	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> PlayerBaseContext;
 
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputAction> MoveAction;
 	
+	UPROPERTY(EditAnywhere, Category="Input")
+	TObjectPtr<class UInputAction> LookAction;
+	
 	void Move(const FInputActionValue& InputActionValue);
-	UFUNCTION(Server, Reliable)
-	void ServerMove(const FVector2D& Direction);
+	void Look(const FInputActionValue& InputActionValue);
 	
 	/** Data Asset */
 	UPROPERTY(EditAnywhere, Category="DataAsset")
 	TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
 	class IRougeAbilitySystemInterface* AbilityInterface;
 
+	ACharacterBase* GetCharacter();
 	IRougeAbilitySystemInterface* GetAbilityInterface();
 	TObjectPtr<class UAbilitySystemComponent> PawnASC;
 	UAbilitySystemComponent* GetASC();

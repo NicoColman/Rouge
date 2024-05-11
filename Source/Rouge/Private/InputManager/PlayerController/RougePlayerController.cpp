@@ -7,19 +7,14 @@
 #include "InputManager/EnhancedInputComponents/RougeEnhancedInputComponent.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Characters/CharacterBase.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
-#include "Net/UnrealNetwork.h"
 
 ARougePlayerController::ARougePlayerController()
 {
 	AbilityInterface = nullptr;
-}
-
-void ARougePlayerController::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-	DOREPLIFETIME(ARougePlayerController, Directionality);
+	CachedCharacter = nullptr;
 }
 
 void ARougePlayerController::BeginPlay()
@@ -51,6 +46,7 @@ void ARougePlayerController::SetupInputComponent()
 
 	// Basic
 	EnhancedInputComponentBase->BindAction(MoveAction, ETriggerEvent::Triggered, this, &ARougePlayerController::Move);
+	EnhancedInputComponentBase->BindAction(LookAction, ETriggerEvent::Triggered, this, &ARougePlayerController::Look);
 
 	/** Data Asset*/
 	EnhancedInputComponentBase->BindAbilityActions(InputConfigDataAsset, this,
@@ -90,18 +86,44 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 
 	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
-
 	if (APawn* ControlledPawn = GetPawn<APawn>())
 	{
 		ControlledPawn->AddMovementInput(ForwardDirection, InputAxisVector.Y);
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
-	ServerMove(InputAxisVector);
+	
+	FVector2D SpriteDirection = FVector2D::ZeroVector;
+	if (!FMath::IsNearlyZero(InputAxisVector.X) || !FMath::IsNearlyZero(InputAxisVector.Y))
+	{
+		const FVector MovementDirection = ForwardDirection * InputAxisVector.Y + RightDirection * InputAxisVector.X;
+		const FVector CameraForwardVector = FVector::ForwardVector.RotateAngleAxis(Rotation.Yaw, FVector::UpVector);
+		const float DotProduct = FVector::DotProduct(MovementDirection, CameraForwardVector);
+		const float CrossProduct = FVector::CrossProduct(CameraForwardVector, MovementDirection).Z;
+
+		if (FMath::Abs(DotProduct) > FMath::Abs(CrossProduct))
+		{
+			SpriteDirection = FVector2D(FMath::Sign(DotProduct), 0.f);
+		}
+		else
+		{
+			SpriteDirection = FVector2D(0.f, FMath::Sign(CrossProduct));
+		}
+	}
+	
+	GetCharacter()->SetDirectionality(SpriteDirection);
 }
 
-void ARougePlayerController::ServerMove_Implementation(const FVector2D& Direction)
+void ARougePlayerController::Look(const FInputActionValue& InputActionValue)
 {
-	Directionality = FVector2D(Direction.Y, Direction.X);
+	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+	GetPawn()->AddControllerYawInput(InputAxisVector.X);
+	GetPawn()->AddControllerPitchInput(InputAxisVector.Y);
+}
+
+ACharacterBase* ARougePlayerController::GetCharacter()
+{
+	if (CachedCharacter) return CachedCharacter;
+	return CachedCharacter = Cast<ACharacterBase>(GetPawn<APawn>());
 }
 
 UAbilitySystemComponent* ARougePlayerController::GetASC()
