@@ -13,6 +13,7 @@ UOverlayWidgetController* ARougeHUD::GetOverlayWidgetController(const FWidgetCon
 	if (OverlayWidgetController) return OverlayWidgetController;
 	OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 	OverlayWidgetController->SetWidgetControllerParams(InWidgetControllerParams);
+	OverlayWidgetController->BindCallbacksToDependencies();
 	return OverlayWidgetController;
 }
 
@@ -29,5 +30,6 @@ void ARougeHUD::InitOverlay(APlayerController* InPlayerController, APlayerState*
 	UOverlayWidgetController* WidgetController = GetOverlayWidgetController(WidgetControllerParams);
 
 	OverlayWidget->SetWidgetController(WidgetController);
+	WidgetController->BroadcastInitialValues();
 	Widget->AddToViewport();
 }

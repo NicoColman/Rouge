@@ -66,7 +66,7 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	check(PS);
 	if (AbilitySystemInterface)
 	{
-		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 		AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
 	}
 	if (AbilitySystemComponent)
@@ -76,21 +76,20 @@ void ACharacterPlayer::InitializeAbilitySystem()
 			AbilitySystemBaseInterface->AbilityActorInfoSet();
 		}
 	}
-	AttributeSet = PS->GetAttributeSet();
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Burn, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::BurnTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Buff_Heal, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::HealTagChanged);
-
-	if (APlayerController* RougePlayerController = Cast<APlayerController>(GetController()))
+	AttributeSet = PS->GetAttributeSet();
+	InitializeAttributes();
+	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		if (ARougeHUD* RougeHUD = Cast<ARougeHUD>(RougePlayerController->GetHUD()))
+		if (ARougeHUD* HUD = Cast<ARougeHUD>(PC->GetHUD()))
 		{
-			RougeHUD->InitOverlay(RougePlayerController, PS, AbilitySystemComponent, AttributeSet);
+			HUD->InitOverlay(PC, PS, AbilitySystemComponent, AttributeSet);
 		}
 	}
 	
-	InitializeAttributes();
 }
 
 void ACharacterPlayer::OnRep_IsBurned()

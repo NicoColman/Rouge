@@ -12,7 +12,6 @@
 #include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
-#include "InputManager/PlayerController/RougePlayerController.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 #include "Net/UnrealNetwork.h"
 

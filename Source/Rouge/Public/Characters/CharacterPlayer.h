@@ -37,4 +37,7 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TObjectPtr<class UCameraComponent> FollowCamera;
 	/** End Basic Character Components */
+
+public:
+	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 };

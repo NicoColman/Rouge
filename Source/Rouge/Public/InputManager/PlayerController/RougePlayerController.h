@@ -27,7 +27,7 @@ private:
 	UPROPERTY()
 	TObjectPtr<APawn> CachedPawn;
 	UPROPERTY()
-	class ACharacterBase* CachedCharacter;
+	class ACharacterPlayer* CachedCharacter;
 	
 	UPROPERTY(EditAnywhere, Category="Input")
 	TObjectPtr<class UInputMappingContext> PlayerBaseContext;
@@ -40,13 +40,17 @@ private:
 	
 	void Move(const FInputActionValue& InputActionValue);
 	void Look(const FInputActionValue& InputActionValue);
+
+	void SetSpriteDirection(const FVector2D& InputAxisVector);
 	
 	/** Data Asset */
 	UPROPERTY(EditAnywhere, Category="DataAsset")
 	TObjectPtr<class UInputConfigDataAsset> InputConfigDataAsset;
 	class IRougeAbilitySystemInterface* AbilityInterface;
 
-	ACharacterBase* GetCharacter();
+	float CameraPitch = 0.f;
+	
+	ACharacterPlayer* GetCharacter();
 	IRougeAbilitySystemInterface* GetAbilityInterface();
 	TObjectPtr<class UAbilitySystemComponent> PawnASC;
 	UAbilitySystemComponent* GetASC();

@@ -10,3 +10,11 @@ void URougeWidgetController::SetWidgetControllerParams(const FWidgetControllerPa
 	AbilitySystemComponent = InWidgetControllerParams.AbilitySystemComponent;
 	AttributeSet = InWidgetControllerParams.AttributeSet;
 }
+
+void URougeWidgetController::BroadcastInitialValues()
+{
+}
+
+void URougeWidgetController::BindCallbacksToDependencies()
+{
+}

@@ -8,6 +8,8 @@
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
 #include "Characters/CharacterBase.h"
+#include "Characters/CharacterPlayer.h"
+#include "GameFramework/SpringArmComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GASInterfaces/RougeAbilitySystemInterface.h"
 
@@ -92,6 +94,16 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 		ControlledPawn->AddMovementInput(RightDirection, InputAxisVector.X);
 	}
 	
+	SetSpriteDirection(InputAxisVector);
+}
+
+void ARougePlayerController::SetSpriteDirection(const FVector2D& InputAxisVector)
+{
+	const FRotator Rotation = GetControlRotation();
+	const FRotator YawRotation(0.f, Rotation.Yaw, 0.f);
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	
 	FVector2D SpriteDirection = FVector2D::ZeroVector;
 	if (!FMath::IsNearlyZero(InputAxisVector.X) || !FMath::IsNearlyZero(InputAxisVector.Y))
 	{
@@ -102,11 +114,30 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 
 		if (FMath::Abs(DotProduct) > FMath::Abs(CrossProduct))
 		{
-			SpriteDirection = FVector2D(FMath::Sign(DotProduct), 0.f);
+			SpriteDirection.X = FMath::Sign(DotProduct);
 		}
 		else
 		{
-			SpriteDirection = FVector2D(0.f, FMath::Sign(CrossProduct));
+			SpriteDirection.Y = FMath::Sign(CrossProduct);
+		}
+
+		// Handle diagonal movement
+		if (!FMath::IsNearlyZero(InputAxisVector.X) && !FMath::IsNearlyZero(InputAxisVector.Y))
+		{
+			SpriteDirection.X = FMath::Sign(InputAxisVector.X);
+			SpriteDirection.Y = FMath::Sign(InputAxisVector.Y);
+
+			// Fix inverted diagonal directions
+			if (SpriteDirection.X == -1 && SpriteDirection.Y == 1) // Top-left
+			{
+				SpriteDirection.X = 1;
+				SpriteDirection.Y = -1;
+			}
+			else if (SpriteDirection.X == 1 && SpriteDirection.Y == -1) // Bottom-right
+			{
+				SpriteDirection.X = -1;
+				SpriteDirection.Y = 1;
+			}
 		}
 	}
 	
@@ -116,14 +147,22 @@ void ARougePlayerController::Move(const FInputActionValue& InputActionValue)
 void ARougePlayerController::Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
+    
 	GetPawn()->AddControllerYawInput(InputAxisVector.X);
-	GetPawn()->AddControllerPitchInput(InputAxisVector.Y);
+
+	constexpr float PitchSensitivity = 2.2f;
+	CameraPitch = FMath::Clamp(CameraPitch + InputAxisVector.Y * PitchSensitivity, -52.0f, 52.0f);
+	
+	USpringArmComponent* CameraBoom = GetCharacter()->GetCameraBoom();
+	FRotator CameraRotation = CameraBoom->GetComponentRotation();
+	CameraRotation.Pitch = CameraPitch * -1.f;
+	CameraBoom->SetWorldRotation(CameraRotation);
 }
 
-ACharacterBase* ARougePlayerController::GetCharacter()
+ACharacterPlayer* ARougePlayerController::GetCharacter()
 {
 	if (CachedCharacter) return CachedCharacter;
-	return CachedCharacter = Cast<ACharacterBase>(GetPawn<APawn>());
+	return CachedCharacter = Cast<ACharacterPlayer>(GetPawn<APawn>());
 }
 
 UAbilitySystemComponent* ARougePlayerController::GetASC()
