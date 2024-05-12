@@ -11,6 +11,7 @@
 #include "PaperFlipbookComponent.h"
 #include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
+#include "UIManager/HUD/RougeHUD.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -60,8 +61,9 @@ int32 ACharacterPlayer::GetCharacterLevel() const
 
 void ACharacterPlayer::InitializeAbilitySystem()
 {
-	const IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(GetPlayerState());
-	check(GetPlayerState());
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	const IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(PS);
+	check(PS);
 	if (AbilitySystemInterface)
 	{
 		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
@@ -74,24 +76,20 @@ void ACharacterPlayer::InitializeAbilitySystem()
 			AbilitySystemBaseInterface->AbilityActorInfoSet();
 		}
 	}
+	AttributeSet = PS->GetAttributeSet();
 	OnASCRegistered.Broadcast(AbilitySystemComponent);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Burn, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::BurnTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Buff_Heal, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::HealTagChanged);
-	/*
-	if (IAttributeSetBaseInterface* AttributeSetInterface = Cast<IAttributeSetBaseInterface>(GetPlayerState()))
-	{
-		AttributeSet = AttributeSetInterface->GetAttributeSet();
-	}
 
-	if (APlayerController* PC = Cast<APlayerController>(GetController()))
+	if (APlayerController* RougePlayerController = Cast<APlayerController>(GetController()))
 	{
-		if (IHUDOnUpdateInterface* HUDInterface = Cast<IHUDOnUpdateInterface>(PC->GetHUD()))
+		if (ARougeHUD* RougeHUD = Cast<ARougeHUD>(RougePlayerController->GetHUD()))
 		{
-			HUDInterface->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);
+			RougeHUD->InitOverlay(RougePlayerController, PS, AbilitySystemComponent, AttributeSet);
 		}
 	}
-	*/
+	
 	InitializeAttributes();
 }
 
