@@ -60,7 +60,8 @@ public:
 	/** End RougeAbilityTypes Functions */
 	
 	static FGameplayEffectContextHandle ApplyDamageEffect(const FDamageEffectParams& DamageEffectParams);
-	
+
+	static int32 GetXPRewardForClassAndLevel(AActor* Actor, const int32 CharacterLevel);
 private:
 	static FPrimaryAssetId GetPrimaryAssetIdFromTag(const FGameplayTag& Tag, const ANSICHAR* InName);
 };

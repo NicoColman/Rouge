@@ -24,6 +24,15 @@ void UASCBase::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>
 	}
 }
 
+void UASCBase::AddPassiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities)
+{
+	for (const TSubclassOf<UGameplayAbility> Ability : Abilities)
+	{
+		FGameplayAbilitySpec AbilitySpec = FGameplayAbilitySpec(Ability, 1, 0);
+		GiveAbilityAndActivateOnce(AbilitySpec);
+	}
+}
+
 void UASCBase::AbilityInputTagHeld(const FGameplayTag InputTag)
 {
 	if (!InputTag.IsValid()) return;

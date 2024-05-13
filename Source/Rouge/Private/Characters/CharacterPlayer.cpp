@@ -9,8 +9,9 @@
 #include "GameFramework/SpringArmComponent.h"
 #include "Camera/CameraComponent.h"
 #include "PaperFlipbookComponent.h"
+#include "CoreUtilites/CoreComponents/AttachedNiagaraComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
-#include "GASManager/Debuffs/DebuffNiagaraComponent.h"
+#include "UIManager/HUD/RougeHUD.h"
 
 ACharacterPlayer::ACharacterPlayer()
 {
@@ -60,11 +61,12 @@ int32 ACharacterPlayer::GetCharacterLevel() const
 
 void ACharacterPlayer::InitializeAbilitySystem()
 {
-	const IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(GetPlayerState());
-	check(GetPlayerState());
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	const IAbilitySystemInterface* AbilitySystemInterface = Cast<IAbilitySystemInterface>(PS);
+	check(PS);
 	if (AbilitySystemInterface)
 	{
-		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(GetPlayerState(), this);
+		AbilitySystemInterface->GetAbilitySystemComponent()->InitAbilityActorInfo(PS, this);
 		AbilitySystemComponent = AbilitySystemInterface->GetAbilitySystemComponent();
 	}
 	if (AbilitySystemComponent)
@@ -78,37 +80,26 @@ void ACharacterPlayer::InitializeAbilitySystem()
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Burn, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::BurnTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Debuff_Stun, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::StunTagChanged);
 	AbilitySystemComponent->RegisterGameplayTagEvent(FRougeGameplayTags::Get().Buff_Heal, EGameplayTagEventType::NewOrRemoved).AddUObject(this, &ACharacterPlayer::HealTagChanged);
-	/*
-	if (IAttributeSetBaseInterface* AttributeSetInterface = Cast<IAttributeSetBaseInterface>(GetPlayerState()))
-	{
-		AttributeSet = AttributeSetInterface->GetAttributeSet();
-	}
-
+	AttributeSet = PS->GetAttributeSet();
+	InitializeAttributes();
 	if (APlayerController* PC = Cast<APlayerController>(GetController()))
 	{
-		if (IHUDOnUpdateInterface* HUDInterface = Cast<IHUDOnUpdateInterface>(PC->GetHUD()))
+		if (ARougeHUD* HUD = Cast<ARougeHUD>(PC->GetHUD()))
 		{
-			HUDInterface->InitOverlay(PC, GetPlayerState(), AbilitySystemComponent, AttributeSet);
+			HUD->InitOverlay(PC, PS, AbilitySystemComponent, AttributeSet);
 		}
 	}
-	*/
-	InitializeAttributes();
+	
 }
 
 void ACharacterPlayer::OnRep_IsBurned()
 {
-	if (bIsBurned)
-	{
-		BurnDebuffComponent->Activate();
-	}
-	else
-	{
-		BurnDebuffComponent->Deactivate();
-	}
+	BurnComponent->ActivateComponents(bIsHealed);
 }
 
 void ACharacterPlayer::OnRep_IsStunned()
 {
+	// Here we don't use "StunComponent->ActivateComponents(bIsStunned);" because we are already replicating the FGameplayTags
 	if (AbilitySystemComponent)
 	{
 		const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
@@ -130,12 +121,5 @@ void ACharacterPlayer::OnRep_IsStunned()
 
 void ACharacterPlayer::OnRep_IsHealed()
 {
-	if (bIsHealed)
-	{
-		HealBuffComponent->Activate();
-	}
-	else
-	{
-		HealBuffComponent->Deactivate();
-	}
+	HealComponent->ActivateComponents(bIsHealed);
 }

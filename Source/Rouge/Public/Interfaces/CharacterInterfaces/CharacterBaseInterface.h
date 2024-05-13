@@ -26,10 +26,10 @@ class ROUGE_API ICharacterBaseInterface
 
 	// Add interface functions to this class. This is the class that will be inherited to implement this interface.
 public:
+	virtual FVector2D GetDirectionality() const = 0;
 	virtual int32 GetCharacterLevel() const = 0;
 	virtual void SetPlayerWeapon(class AActor* Weapon) = 0;
 	virtual class UCharacterBaseDataAsset* GetCharacterDataAsset() const = 0;
-
 
 	virtual FOnASCRegistered& GetOnASCRegisteredDelegate() = 0;
 	virtual FOnDeath& GetOnDeathDelegate() = 0;

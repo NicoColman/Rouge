@@ -3,8 +3,19 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
+#include "CoreUtilites/RougeAbilityUtilities.h"
 #include "Engine/DataAsset.h"
 #include "CharacterBaseDataAsset.generated.h"
+
+UENUM(BlueprintType)
+enum class EAttachedNiagaraSystems : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Burned UMETA(DisplayName = "Burned"),
+	Stunned UMETA(DisplayName = "Stunned"),
+	Healed UMETA(DisplayName = "Healed")
+};
 
 /**
  * 
@@ -21,15 +32,13 @@ public:
 	TSubclassOf<class UPaperZDAnimInstance> CharacterAnimInstance;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
-	TObjectPtr<class UNiagaraSystem> BurnSystem;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
-	TObjectPtr<class UNiagaraSystem> StunSystem;
-	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
-	TObjectPtr<class UNiagaraSystem> HealSystem;
+	TMap<EAttachedNiagaraSystems, FAbilityCuesBase> AttachedNiagaraSystems;
 
 	/** Gas */
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	TArray<TSubclassOf<class UGameplayAbility>> PassiveStartupAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> PrimaryAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
@@ -38,4 +47,8 @@ public:
 	TSubclassOf<UGameplayEffect> VitalAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TObjectPtr<UCurveTable> DamageCalculationsCoefficients;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "XP")
+	FScalableFloat XPReward = FScalableFloat();
+	
 };
