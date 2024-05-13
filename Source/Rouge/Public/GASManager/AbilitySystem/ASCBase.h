@@ -19,6 +19,7 @@ public:
 	virtual void AbilityActorInfoSet() override;
 	
 	virtual void AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities) override;
+	virtual void AddPassiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities) override;
 
 	virtual void AbilityInputTagHeld(const FGameplayTag InputTag) override;
 	virtual void AbilityInputTagPressed(const FGameplayTag InputTag) override;

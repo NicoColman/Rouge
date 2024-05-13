@@ -23,6 +23,7 @@ class ROUGE_API IRougeAbilitySystemInterface
 public:
 	virtual void AbilityActorInfoSet() = 0;
 	virtual void AddCharacterAbilities(const TArray<TSubclassOf<class UGameplayAbility>>& Abilities) = 0;
+	virtual void AddPassiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities) = 0;
 	virtual void AbilityInputTagHeld(const struct FGameplayTag InputTag) = 0;
 	virtual void AbilityInputTagPressed(const FGameplayTag InputTag) = 0;
 	virtual void AbilityInputTagReleased(const FGameplayTag InputTag) = 0;

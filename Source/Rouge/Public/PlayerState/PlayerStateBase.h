@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerState.h"
 #include "PlayerStateBase.generated.h"
 
+class ULevelUpInfoDataAsset;
 DECLARE_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChanged, int32 /* StatValue */);
 
 /**
@@ -32,6 +33,8 @@ public:
 	void AddToLevel(const int32 AddedLevel);
 	void SetXP(const int32 NewXP);
 	void SetLevel(const int32 NewLevel);
+
+	TObjectPtr<ULevelUpInfoDataAsset> LevelUpInfo;
 
 private:
 	UPROPERTY()

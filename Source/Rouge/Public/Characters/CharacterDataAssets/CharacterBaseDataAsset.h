@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "ScalableFloat.h"
 #include "CoreUtilites/RougeAbilityUtilities.h"
 #include "Engine/DataAsset.h"
 #include "CharacterBaseDataAsset.generated.h"
@@ -37,6 +38,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TArray<TSubclassOf<class UGameplayAbility>> StartupAbilities;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
+	TArray<TSubclassOf<class UGameplayAbility>> PassiveStartupAbilities;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> PrimaryAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TSubclassOf<class UGameplayEffect> SecondaryAttributeEffect;
@@ -44,4 +47,8 @@ public:
 	TSubclassOf<UGameplayEffect> VitalAttributeEffect;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Abilities")
 	TObjectPtr<UCurveTable> DamageCalculationsCoefficients;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "XP")
+	FScalableFloat XPReward = FScalableFloat();
+	
 };

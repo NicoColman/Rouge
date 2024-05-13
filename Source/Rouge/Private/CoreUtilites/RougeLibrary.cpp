@@ -5,6 +5,7 @@
 
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
+#include "Characters/CharacterDataAssets/CharacterBaseDataAsset.h"
 #include "CoreUtilites/RougeAbilityTypes.h"
 #include "GlobalManagers/RougeAssetManager.h"
 #include "GlobalManagers/RougeGameplayTags.h"
@@ -245,4 +246,10 @@ FGameplayEffectContextHandle URougeLibrary::ApplyDamageEffect(const FDamageEffec
 	
 	DamageEffectParams.TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*SpecHandle.Data);
 	return EffectContext;
+}
+
+int32 URougeLibrary::GetXPRewardForClassAndLevel(AActor* Actor, const int32 CharacterLevel)
+{
+	const float XPReward = GetCharacterBaseDataAsset(Actor)->XPReward.GetValueAtLevel(CharacterLevel);
+	return static_cast<int32>(XPReward);
 }

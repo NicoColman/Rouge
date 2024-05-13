@@ -13,6 +13,7 @@
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
 #include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
+#include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
 
 UAttributeSetBase::UAttributeSetBase()
 {
@@ -116,6 +117,12 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		HandleIncomingDamage(Props);
 	}
+	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
+	{
+		const float LocalIncomingXP = GetIncomingXP();
+		SetIncomingXP(0.f);
+		UE_LOG(LogTemp, Warning, TEXT("Incoming XP: %f"), LocalIncomingXP);
+	}
 }
 
 void UAttributeSetBase::SetEffectProperties(const FGameplayEffectModCallbackData& Data, FEffectProperties& Props) const
@@ -167,6 +174,7 @@ void UAttributeSetBase::HandleIncomingDamage(const FEffectProperties& Props)
 		{
 			GameMode->RequestRespawn(Props.TargetController);
 		}
+		SendXPEvent(Props);
 	}
 	else
 	{
@@ -238,6 +246,19 @@ void UAttributeSetBase::Debuff(const FEffectProperties& Props)
 		RougeEffectContext->SetDamageType(DebuffDamageType);
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
+}
+
+void UAttributeSetBase::SendXPEvent(const FEffectProperties& Props)
+{
+	if (const ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(Props.TargetCharacter))
+	{
+		const int32 XPReward = URougeLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, CharacterInterface->GetCharacterLevel());
+		const FGameplayTag XPEventTag = FRougeGameplayTags::Get().SetByCaller_Attribute_IncomingXP;
+		FGameplayEventData Payload;
+		Payload.EventTag = XPEventTag;
+		Payload.EventMagnitude = XPReward;
+		UAbilitySystemBlueprintLibrary::SendGameplayEventToActor(Props.SourceCharacter, XPEventTag, Payload);
 	}
 }
 

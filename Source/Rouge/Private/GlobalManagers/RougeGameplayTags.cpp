@@ -195,6 +195,11 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("Attributes.Resistance.Lightning"),
 		FString("Set Lightning Resistance")
 		);
+	// Meta
+	GameplayTags.Attribute_Meta_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Attributes.Meta.IncomingXP"),
+		FString("Set Incoming XP")
+		);
 	/** End Attribute Tags */
 
 	/** Begin Effect Tags */
@@ -300,6 +305,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	GameplayTags.SetByCaller_Ability_HealAmount = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("SetByCaller.Ability.HealAmount"),
 		FString("Set By Caller Ability Heal Amount")
+		);
+	GameplayTags.SetByCaller_Attribute_IncomingXP = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("SetByCaller.Attribute.IncomingXP"),
+		FString("Set By Caller Attribute Incoming XP")
 		);
 	/** End SetByCaller Tags */
 

@@ -87,6 +87,9 @@ public:
 	// Resistances Tags
 	FGameplayTag Attribute_Resistance_Fire;
 	FGameplayTag Attribute_Resistance_Lightning;
+
+	//Meta
+	FGameplayTag Attribute_Meta_IncomingXP;
 	/** End Attribute Tags */
 	
 	/** Begin Effect Tags */
@@ -129,6 +132,7 @@ public:
 
 	/** SetByCaller Tags */
 	FGameplayTag SetByCaller_Ability_HealAmount;
+	FGameplayTag SetByCaller_Attribute_IncomingXP;
 	/** End SetByCaller Tags */
 
 	/** Begin Damage Tags */

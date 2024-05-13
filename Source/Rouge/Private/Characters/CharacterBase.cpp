@@ -91,9 +91,10 @@ void ACharacterBase::InitializeAttributes()
 void ACharacterBase::AddCharacterAbilities()
 {
 	if (!HasAuthority()) return;
-	if (AbilitySystemComponent)
+	if (IRougeAbilitySystemInterface* AbilitySystemInterface = Cast<IRougeAbilitySystemInterface>(AbilitySystemComponent))
 	{
-		CastChecked<IRougeAbilitySystemInterface>(AbilitySystemComponent)->AddCharacterAbilities(CharacterDataAsset->StartupAbilities);
+		AbilitySystemInterface->AddCharacterAbilities(CharacterDataAsset->StartupAbilities);
+		AbilitySystemInterface->AddPassiveCharacterAbilities(CharacterDataAsset->PassiveStartupAbilities);
 	}
 }
 
