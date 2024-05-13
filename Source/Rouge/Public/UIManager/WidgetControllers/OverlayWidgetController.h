@@ -8,6 +8,7 @@
 
 struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewHealth);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewHealth);
 
 /**
  * 
@@ -27,6 +28,8 @@ public:
 	FOnAttributeChangedSignature OnMaxHealthChanged;
 	UPROPERTY(BlueprintAssignable, Category = "GAS|XP")
 	FOnAttributeChangedSignature OnXPChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Level")
+	FOnPlayerStatChangedSignature OnLevelChanged;
 
 protected:
 	void HealthChanged(const FOnAttributeChangeData& Data) const;
