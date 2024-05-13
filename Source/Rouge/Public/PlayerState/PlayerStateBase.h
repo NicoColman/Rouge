@@ -34,6 +34,7 @@ public:
 	void SetXP(const int32 NewXP);
 	void SetLevel(const int32 NewLevel);
 
+	UPROPERTY(EditDefaultsOnly)
 	TObjectPtr<ULevelUpInfoDataAsset> LevelUpInfo;
 
 private:

@@ -72,10 +72,13 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	AActor* SourceActor = SourceASC ? SourceASC->GetAvatarActor() : nullptr;
 	AActor* TargetActor = TargetASC ? TargetASC->GetAvatarActor() : nullptr;
-
+	
 	const ICharacterBaseInterface* InterfaceSourceCharacter = Cast<ICharacterBaseInterface>(SourceActor);
 	const ICharacterBaseInterface* InterfaceTargetCharacter = Cast<ICharacterBaseInterface>(TargetActor);
 
+	int32 SourceActorLevel = InterfaceSourceCharacter ? InterfaceSourceCharacter->GetCharacterLevel() : 1;
+	int32 TargetActorLevel = InterfaceTargetCharacter ? InterfaceTargetCharacter->GetCharacterLevel() : 1;
+	
 	const FGameplayEffectSpec& Spec = ExecutionParams.GetOwningSpec();
 
 	const FGameplayTagContainer* SourceTags = Spec.CapturedSourceTags.GetAggregatedTags();
@@ -128,11 +131,11 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 
 	const UCharacterBaseDataAsset* SourceDataAsset = URougeLibrary::GetCharacterBaseDataAsset(SourceActor);
 	const FRealCurve* ArmorPenetrationCurve = SourceDataAsset->DamageCalculationsCoefficients->FindCurve(FName("ArmorPenetration"), FString());
-	const float ArmorPenetrationCoefficient =  ArmorPenetrationCurve->Eval(InterfaceSourceCharacter->GetCharacterLevel());
+	const float ArmorPenetrationCoefficient =  ArmorPenetrationCurve->Eval(SourceActorLevel);
 	const float EffectiveArmor = TargetArmor *= (100 - SourceArmorPenetration * ArmorPenetrationCoefficient) / 100;
 
 	const FRealCurve* EffectiveArmorCurve = SourceDataAsset->DamageCalculationsCoefficients->FindCurve(FName("EffectiveArmor"), FString());
-	const float EffectArmorCoefficient =  EffectiveArmorCurve->Eval(InterfaceTargetCharacter->GetCharacterLevel());
+	const float EffectArmorCoefficient =  EffectiveArmorCurve->Eval(TargetActorLevel);
 	
 	Damage *= (100 - EffectiveArmor * EffectArmorCoefficient) / 100.f;
 
@@ -150,7 +153,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 	SourceCriticalHitDamage = FMath::Max<float>(SourceCriticalHitDamage, 0.f);
 
 	const FRealCurve* CriticalHitResistanceCurve = SourceDataAsset->DamageCalculationsCoefficients->FindCurve(FName("CriticalHitResistance"), FString());
-	const float CriticalHitResistanceCoefficient =  CriticalHitResistanceCurve->Eval(InterfaceTargetCharacter->GetCharacterLevel());
+	const float CriticalHitResistanceCoefficient =  CriticalHitResistanceCurve->Eval(TargetActorLevel);
 	
 	const float EffectiveCriticalHitChance = SourceCriticalHitChance - TargetCriticalHitResistance * CriticalHitResistanceCoefficient;
 	const bool bCriticalHit = FMath::RandRange(1, 100) <= EffectiveCriticalHitChance;

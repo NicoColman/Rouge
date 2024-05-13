@@ -13,6 +13,8 @@
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "UIManager/HUD/RougeHUD.h"
 
+#include "GASManager/GASDataAssets/LevelUpInfoDataAsset.h"
+
 ACharacterPlayer::ACharacterPlayer()
 {
 	PrimaryActorTick.bCanEverTick = true;
@@ -25,6 +27,10 @@ ACharacterPlayer::ACharacterPlayer()
 	FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
 	FollowCamera->SetupAttachment(CameraBoom);
 	FollowCamera->SetActive(true);
+
+	LevelUpNiagaraComponent = CreateDefaultSubobject<UNiagaraComponent>(TEXT("LevelUpNiagaraComponent"));
+	LevelUpNiagaraComponent->SetupAttachment(GetSprite());
+	LevelUpNiagaraComponent->SetAutoActivate(false);
 }
 
 void ACharacterPlayer::Tick(float DeltaTime)
@@ -122,4 +128,75 @@ void ACharacterPlayer::OnRep_IsStunned()
 void ACharacterPlayer::OnRep_IsHealed()
 {
 	HealComponent->ActivateComponents(bIsHealed);
+}
+
+void ACharacterPlayer::AddToXP(const int32 InXP)
+{
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	PS->AddToXP(InXP);
+}
+
+void ACharacterPlayer::AddToPlayerLevel(const int32 InLevel)
+{
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	PS->AddToLevel(InLevel);
+}
+
+void ACharacterPlayer::AddToAttributesPoints(const int32 InPoints)
+{
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+}
+
+void ACharacterPlayer::AddToSpellPoints(const int32 InPoints)
+{
+	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+}
+
+int32 ACharacterPlayer::FindLevelForXP(const int32 InXP) const
+{
+	const APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	return PS->LevelUpInfo->FindLevelForXP(InXP);
+}
+
+int32 ACharacterPlayer::GetXP() const
+{
+	const APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	return PS->GetXP();
+}
+
+int32 ACharacterPlayer::GetAttributesPointsRewards(const int32 Level) const
+{
+	const APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	return PS->LevelUpInfo->LevelUpInfo[Level].AttributePointAward;
+}
+
+int32 ACharacterPlayer::GetSpellPointsRewards(const int32 Level) const
+{
+	const APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
+	check(PS);
+	return PS->LevelUpInfo->LevelUpInfo[Level].AbilityPointAward;
+}
+
+void ACharacterPlayer::LevelUp()
+{
+	MulticastLevelUpNiagara();
+}
+
+void ACharacterPlayer::MulticastLevelUpNiagara_Implementation()
+{
+	if (IsValid(LevelUpNiagaraComponent))
+	{
+		const FVector CameraLocation = FollowCamera->GetComponentLocation();
+		const FVector NiagaraSystemLocation = LevelUpNiagaraComponent->GetComponentLocation();
+		const FRotator ToCameraRotation = (CameraLocation - NiagaraSystemLocation).Rotation();
+		LevelUpNiagaraComponent->SetWorldRotation(ToCameraRotation);
+		LevelUpNiagaraComponent->Activate(true);
+	}
 }

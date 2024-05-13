@@ -4,10 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "CharacterBase.h"
+#include "Interfaces/CharacterInterfaces/CharacterPlayerInterface.h"
 #include "CharacterPlayer.generated.h"
 
+class UNiagaraComponent;
+
 UCLASS()
-class ROUGE_API ACharacterPlayer : public ACharacterBase
+class ROUGE_API ACharacterPlayer : public ACharacterBase, public ICharacterPlayerInterface
 {
 	GENERATED_BODY()
 
@@ -20,6 +23,18 @@ public:
 	/** Begin ICharacterBaseInterface */
 	virtual int32 GetCharacterLevel() const override;
 	/** End ICharacterBaseInterface */
+
+	/** Begin ICharacterPlayerInterface */
+	virtual void AddToXP(const int32 InXP) override;
+	virtual void AddToPlayerLevel(const int32 InLevel) override;
+	virtual void AddToAttributesPoints(const int32 InPoints) override;
+	virtual void AddToSpellPoints(const int32 InPoints) override;
+	virtual void LevelUp() override;
+	virtual int32 GetXP() const override;
+	virtual int32 FindLevelForXP(const int32 InXP) const override;
+	virtual int32 GetAttributesPointsRewards(const int32 Level) const override;
+	virtual int32 GetSpellPointsRewards(const int32 Level) const override;
+	/** End ICharacterPlayerInterface */
 
 protected:
 	virtual void BeginPlay() override;
@@ -38,6 +53,13 @@ protected:
 	TObjectPtr<class UCameraComponent> FollowCamera;
 	/** End Basic Character Components */
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TObjectPtr<UNiagaraComponent> LevelUpNiagaraComponent;
+
+private:
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastLevelUpNiagara();
+	
 public:
 	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
 };

@@ -14,6 +14,7 @@
 #include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
 #include "GameplayEffectComponents/TargetTagsGameplayEffectComponent.h"
 #include "Interfaces/CharacterInterfaces/CharacterBaseInterface.h"
+#include "Interfaces/CharacterInterfaces/CharacterPlayerInterface.h"
 
 UAttributeSetBase::UAttributeSetBase()
 {
@@ -121,7 +122,29 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	{
 		const float LocalIncomingXP = GetIncomingXP();
 		SetIncomingXP(0.f);
-		UE_LOG(LogTemp, Warning, TEXT("Incoming XP: %f"), LocalIncomingXP);
+
+		if (ICharacterPlayerInterface* PlayerInterface = Cast<ICharacterPlayerInterface>(Props.TargetCharacter))
+		{
+			const int32 CurrentLevel = Cast<ICharacterBaseInterface>(Props.SourceCharacter)->GetCharacterLevel();
+			const int32 CurrentXP = PlayerInterface->GetXP();
+
+			const int32 NewLevel = PlayerInterface->FindLevelForXP(CurrentXP + LocalIncomingXP);
+			const int32 NumLevelUps = NewLevel - CurrentLevel;
+			if (NumLevelUps > 0)
+			{
+				for (int32 i = 0; i < NumLevelUps; i++)
+				{
+					const int32 AttributePointsReward = PlayerInterface->GetAttributesPointsRewards(CurrentLevel + i);
+					const int32 SpellPointsReward = PlayerInterface->GetSpellPointsRewards(CurrentLevel + i);
+					PlayerInterface->AddToPlayerLevel(NumLevelUps);
+					PlayerInterface->AddToAttributesPoints(AttributePointsReward);
+					PlayerInterface->AddToSpellPoints(SpellPointsReward);
+					PlayerInterface->LevelUp();
+				}
+			}
+			
+			PlayerInterface->AddToXP(LocalIncomingXP);
+		}
 	}
 }
 
