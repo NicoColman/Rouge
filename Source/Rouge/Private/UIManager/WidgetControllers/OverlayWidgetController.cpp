@@ -49,6 +49,7 @@ void UOverlayWidgetController::XPChanged(const int32 NewXP) const
 	const ULevelUpInfoDataAsset* LevelUpInfo = PlayerStateBase->LevelUpInfo;
 	checkf(LevelUpInfo, TEXT("LevelUpInfoDataAsset is not set!"));
 
+	
 	const int32 Level = LevelUpInfo->FindLevelForXP(NewXP);
 	const int32 MaxLevel = LevelUpInfo->LevelUpInfo.Num();
 
