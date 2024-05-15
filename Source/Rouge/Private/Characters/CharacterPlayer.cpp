@@ -148,12 +148,14 @@ void ACharacterPlayer::AddToAttributesPoints(const int32 InPoints)
 {
 	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
 	check(PS);
+	PS->AddAttributePoints(InPoints);
 }
 
 void ACharacterPlayer::AddToSpellPoints(const int32 InPoints)
 {
 	APlayerStateBase* PS = Cast<APlayerStateBase>(GetPlayerState());
 	check(PS);
+	PS->AddAbilityPoints(InPoints);
 }
 
 int32 ACharacterPlayer::FindLevelForXP(const int32 InXP) const

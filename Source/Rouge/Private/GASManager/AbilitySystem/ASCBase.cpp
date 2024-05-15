@@ -81,8 +81,44 @@ void UASCBase::AbilityInputTagReleased(const FGameplayTag InputTag)
 	}
 }
 
+FGameplayTag UASCBase::GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag StatusTag : AbilitySpec.DynamicAbilityTags)
+	{
+		if (StatusTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities.Status"))))
+		{
+			return StatusTag;
+		}
+	}
+	return FGameplayTag();
+}
+
+FGameplayAbilitySpec* UASCBase::GetSpecFromAbilityTag(const FGameplayTag& AbilityTag)
+{
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	for (FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+		{
+			if (Tag.MatchesTag(AbilityTag))
+			{
+				return &AbilitySpec;
+			}
+		}
+	}
+	return nullptr;
+}
+
+void UASCBase::ServerUpgradeAbility_Implementation(const FGameplayTag& AbilityTag)
+{
+	if (FGameplayAbilitySpec* AbilitySpec = GetSpecFromAbilityTag(AbilityTag))
+	{
+		AbilitySpec->Level += 1;
+	}
+}
+
 void UASCBase::ClientEffectApplied_Implementation(UAbilitySystemComponent* ASC, const FGameplayEffectSpec& SpecApplied,
-	FActiveGameplayEffectHandle ActiveHandle)
+                                                  FActiveGameplayEffectHandle ActiveHandle)
 {
 	FGameplayTagContainer TagContainer;
 	SpecApplied.GetAllAssetTags(TagContainer);

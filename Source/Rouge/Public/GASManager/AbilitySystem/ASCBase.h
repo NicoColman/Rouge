@@ -24,6 +24,12 @@ public:
 	virtual void AbilityInputTagHeld(const FGameplayTag InputTag) override;
 	virtual void AbilityInputTagPressed(const FGameplayTag InputTag) override;
 	virtual void AbilityInputTagReleased(const FGameplayTag InputTag) override;
+
+	FGameplayTag GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec);
+	FGameplayAbilitySpec*GetSpecFromAbilityTag(const FGameplayTag& AbilityTag);
+	
+	UFUNCTION(Server, Reliable)
+	void ServerUpgradeAbility(const FGameplayTag& AbilityTag);
 	
 protected:
 	UFUNCTION(Client, Reliable)

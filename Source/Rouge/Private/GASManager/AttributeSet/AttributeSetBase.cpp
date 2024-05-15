@@ -108,8 +108,7 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	
 	FEffectProperties Props;
 	SetEffectProperties(Data, Props);
-
-	// TODO: Check if Target character is Dead, maybe via Interface
+	
 	if (Data.EvaluatedData.Attribute == GetHealthAttribute())
 	{
 		SetHealth(FMath::Clamp(GetHealth(), 0.f, GetMaxHealth()));
@@ -120,31 +119,7 @@ void UAttributeSetBase::PostGameplayEffectExecute(const FGameplayEffectModCallba
 	}
 	if (Data.EvaluatedData.Attribute == GetIncomingXPAttribute())
 	{
-		const float LocalIncomingXP = GetIncomingXP();
-		SetIncomingXP(0.f);
-
-		if (ICharacterPlayerInterface* PlayerInterface = Cast<ICharacterPlayerInterface>(Props.TargetCharacter))
-		{
-			const int32 CurrentLevel = Cast<ICharacterBaseInterface>(Props.SourceCharacter)->GetCharacterLevel();
-			const int32 CurrentXP = PlayerInterface->GetXP();
-
-			const int32 NewLevel = PlayerInterface->FindLevelForXP(CurrentXP + LocalIncomingXP);
-			const int32 NumLevelUps = NewLevel - CurrentLevel;
-			if (NumLevelUps > 0)
-			{
-				for (int32 i = 0; i < NumLevelUps; i++)
-				{
-					const int32 AttributePointsReward = PlayerInterface->GetAttributesPointsRewards(CurrentLevel + i);
-					const int32 SpellPointsReward = PlayerInterface->GetSpellPointsRewards(CurrentLevel + i);
-					PlayerInterface->AddToPlayerLevel(NumLevelUps);
-					PlayerInterface->AddToAttributesPoints(AttributePointsReward);
-					PlayerInterface->AddToSpellPoints(SpellPointsReward);
-					PlayerInterface->LevelUp();
-				}
-			}
-			
-			PlayerInterface->AddToXP(LocalIncomingXP);
-		}
+		HandleIncomingXP(Props);
 	}
 }
 
@@ -269,6 +244,35 @@ void UAttributeSetBase::Debuff(const FEffectProperties& Props)
 		RougeEffectContext->SetDamageType(DebuffDamageType);
 
 		Props.TargetASC->ApplyGameplayEffectSpecToSelf(*MutableSpec);
+	}
+}
+
+void UAttributeSetBase::HandleIncomingXP(const FEffectProperties& Props)
+{
+	const float LocalIncomingXP = GetIncomingXP();
+	SetIncomingXP(0.f);
+
+	if (ICharacterPlayerInterface* PlayerInterface = Cast<ICharacterPlayerInterface>(Props.TargetCharacter))
+	{
+		const int32 CurrentLevel = Cast<ICharacterBaseInterface>(Props.SourceCharacter)->GetCharacterLevel();
+		const int32 CurrentXP = PlayerInterface->GetXP();
+
+		const int32 NewLevel = PlayerInterface->FindLevelForXP(CurrentXP + LocalIncomingXP);
+		const int32 NumLevelUps = NewLevel - CurrentLevel;
+		if (NumLevelUps > 0)
+		{
+			for (int32 i = 0; i < NumLevelUps; i++)
+			{
+				const int32 AttributePointsReward = PlayerInterface->GetAttributesPointsRewards(CurrentLevel + i);
+				const int32 SpellPointsReward = PlayerInterface->GetSpellPointsRewards(CurrentLevel + i);
+				PlayerInterface->AddToPlayerLevel(NumLevelUps);
+				PlayerInterface->AddToAttributesPoints(AttributePointsReward);
+				PlayerInterface->AddToSpellPoints(SpellPointsReward);
+				PlayerInterface->LevelUp();
+			}
+		}
+			
+		PlayerInterface->AddToXP(LocalIncomingXP);
 	}
 }
 
