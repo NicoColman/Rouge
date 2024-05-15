@@ -4,8 +4,10 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
+#include "GameplayTagContainer.h"
 #include "RougeWidgetController.generated.h"
 
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, float, AbilityInfo);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -40,6 +42,10 @@ public:
 	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 	virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
+	virtual void OnInitializeStartupAbilities(class UASCBase* ASC);
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
+	FAbilityInfoSignature OnAbilityInfo;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")

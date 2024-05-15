@@ -99,6 +99,7 @@ public:
 	/** End Effect Tags */
 	
 	/** Begin Abilities Tags*/
+	FGameplayTag Ability_Fire_Fireball;
 	FGameplayTag Ability_Dash;
 	FGameplayTag Ability_Pickup;
 	FGameplayTag Ability_Shockwave;

@@ -18,3 +18,10 @@ void URougeWidgetController::BroadcastInitialValues()
 void URougeWidgetController::BindCallbacksToDependencies()
 {
 }
+
+void URougeWidgetController::OnInitializeStartupAbilities(UASCBase* ASC)
+{
+	//if (!ASC->bStartupAbilitiesGiven) return;
+
+	
+}

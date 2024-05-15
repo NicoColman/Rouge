@@ -218,6 +218,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	/** End Effect Tags */
 
 	/** Begin Abilities Tags*/
+	GameplayTags.Ability_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Ability.Fire.Fireball"),
+		FString("Ability Fireball")
+		);
 	GameplayTags.Ability_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("Ability.Dash"),
 		FString("Ability Dash")
