@@ -6,7 +6,9 @@
 #include "RougeWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+class UAbilityInfoDataAsset;
 struct FOnAttributeChangeData;
+
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnPlayerStatChangedSignature, int32, NewHealth);
 
@@ -34,6 +36,10 @@ public:
 protected:
 	void HealthChanged(const FOnAttributeChangeData& Data) const;
 	void MaxHealthChanged(const FOnAttributeChangeData& Data) const;
+	virtual void OnInitializeStartupAbilities(UASCBase* ASC) override;
+	
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "Data")
+	TObjectPtr<UAbilityInfoDataAsset> AbilityInfoDataAsset;
 
 	void XPChanged(const int32 NewXP) const;
 };

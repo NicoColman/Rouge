@@ -6,6 +6,9 @@
 #include "UObject/Object.h"
 #include "RougeWidgetController.generated.h"
 
+struct FRougeAbilityInfo;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FRougeAbilityInfo&, AbilityInfo);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams
@@ -40,6 +43,10 @@ public:
 	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 	virtual void BroadcastInitialValues();
 	virtual void BindCallbacksToDependencies();
+	virtual void OnInitializeStartupAbilities(class UASCBase* ASC);
+
+	UPROPERTY(BlueprintAssignable, Category = "GAS|Messages")
+	FAbilityInfoSignature OnAbilityInfo;
 	
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "WidgetController")

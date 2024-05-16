@@ -52,7 +52,7 @@ void UPlayerDashAbility::ExecuteGameplayCue() const
 {
 	FGameplayCueParameters CueParams;
 	FGameplayTagContainer SourceTags;
-	SourceTags.AddTag(FRougeGameplayTags::Get().Ability_Dash);
+	SourceTags.AddTag(FRougeGameplayTags::Get().Abilities_Dash);
 	CueParams.AggregatedSourceTags = SourceTags;
 	CueParams.AbilityLevel = 1.f;
 	

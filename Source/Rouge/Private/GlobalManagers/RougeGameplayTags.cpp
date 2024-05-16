@@ -218,17 +218,21 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	/** End Effect Tags */
 
 	/** Begin Abilities Tags*/
-	GameplayTags.Ability_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Ability.Dash"),
-		FString("Ability Dash")
+	GameplayTags.Abilities_Fire_Fireball = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Fire.Fireball"),
+		FString("Abilities Fireball")
 		);
-	GameplayTags.Ability_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Ability.Pickup"),
-		FString("Ability Pickup")
+	GameplayTags.Abilities_Dash = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Dash"),
+		FString("Abilities Dash")
 		);
-	GameplayTags.Ability_Shockwave = UGameplayTagsManager::Get().AddNativeGameplayTag(
-		FName("Ability.Shockwave"),
-		FString("Ability Shockwave")
+	GameplayTags.Abilities_Pickup = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Pickup"),
+		FString("Abilities Pickup")
+		);
+	GameplayTags.Abilities_Shockwave = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.Shockwave"),
+		FString("Abilities Shockwave")
 		);
 	/** End Abilities Tags */
 

@@ -18,7 +18,7 @@ void UPlayerEquipAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handl
 
 	FGameplayCueParameters CueParams;
 	FGameplayTagContainer SourceTags;
-	SourceTags.AddTag(FRougeGameplayTags::Get().Ability_Pickup);
+	SourceTags.AddTag(FRougeGameplayTags::Get().Abilities_Pickup);
 	CueParams.AggregatedSourceTags = SourceTags;
 	GetCurrentActorInfo()->AbilitySystemComponent->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Base, CueParams);
 	

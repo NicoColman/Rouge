@@ -99,9 +99,10 @@ public:
 	/** End Effect Tags */
 	
 	/** Begin Abilities Tags*/
-	FGameplayTag Ability_Dash;
-	FGameplayTag Ability_Pickup;
-	FGameplayTag Ability_Shockwave;
+	FGameplayTag Abilities_Fire_Fireball;
+	FGameplayTag Abilities_Dash;
+	FGameplayTag Abilities_Pickup;
+	FGameplayTag Abilities_Shockwave;
 	/** End Abilities Tags */
 
 	/** Begin Cooldown Tags */
