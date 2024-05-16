@@ -9,6 +9,15 @@
 #include "CharacterBaseDataAsset.generated.h"
 
 UENUM(BlueprintType)
+enum class ECharacterClass : uint8
+{
+	None UMETA(DisplayName = "None"),
+	Player UMETA(DisplayName = "Player"),
+	Melee UMETA(DisplayName = "Melee"),
+	Range UMETA(DisplayName = "Range")
+};
+
+UENUM(BlueprintType)
 enum class EAttachedNiagaraSystems : uint8
 {
 	None UMETA(DisplayName = "None"),
@@ -30,6 +39,9 @@ public:
 	TObjectPtr<class UPaperFlipbook> CharacterFlipbook;
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
 	TSubclassOf<class UPaperZDAnimInstance> CharacterAnimInstance;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Character")
+	ECharacterClass CharacterClass = ECharacterClass::None;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "NiagaraSystems")
 	TMap<EAttachedNiagaraSystems, FAbilityCuesBase> AttachedNiagaraSystems;

@@ -12,7 +12,8 @@
 				"PaperZD",
 				"GameplayAbilities",
 				"Engine",
-				"Niagara"
+				"Niagara",
+				"AIModule"
 			]
 		}
 	],

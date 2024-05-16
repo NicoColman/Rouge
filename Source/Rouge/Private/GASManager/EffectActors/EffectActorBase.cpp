@@ -14,6 +14,7 @@ AEffectActorBase::AEffectActorBase()
 	
 	ActorLevel = 1.f;
 	bDestroyOnEffectRemoval = false;
+	bApplyEffectToEnemies = false;
 	EffectActorDataAsset = nullptr;
 	ObjectType = EObjectType::EOT_None;
 	EffectDurationType = EGameplayEffectDurationType::Instant;
@@ -43,6 +44,9 @@ void AEffectActorBase::BeginPlay()
 	EffectApplicationPolicy = EffectActorDataAsset->EffectApplicationPolicy;
 	EffectRemovalPolicy = EffectActorDataAsset->EffectRemovalPolicy;
 	ActorLevel = EffectActorDataAsset->ActorLevel;
+	bDestroyOnEffectApplied = EffectActorDataAsset->bDestroyOnEffectApplied;
+	bDestroyOnEffectRemoval = EffectActorDataAsset->bDestroyOnEffectRemoval;
+	bApplyEffectToEnemies = EffectActorDataAsset->bApplyEffectToEnemies;
 
 	const FVector NewScale = FVector(1.f, 1.f, 1.f) * EffectActorDataAsset->ActorScale;
 	const FRotator NewRotation = URougeLibrary::GetFlipbookRotation(EffectActorDataAsset->FlipbookRotation);
@@ -101,17 +105,13 @@ void AEffectActorBase::OnSphereOverlap(UPrimitiveComponent* OverlappedComponent,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	OnEffectOverlap(OtherActor);
-	if (EffectActorDataAsset->bDestroyOnEffectApplied)
-	{
-		Destroy();
-	}
 }
 
 void AEffectActorBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
 	OnEffectEndOverlap(OtherActor);
-	if (EffectActorDataAsset->bDestroyOnEffectRemoval)
+	if (bDestroyOnEffectRemoval)
 	{
 		Destroy();
 	}
@@ -119,6 +119,8 @@ void AEffectActorBase::OnSphereEndOverlap(UPrimitiveComponent* OverlappedCompone
 
 void AEffectActorBase::OnEffectOverlap(AActor* TargetActor)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies) return;
+
 	if (EffectApplicationPolicy == EEffectApplicationPolicy::EEAP_ApplyOnOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, EffectActorDataAsset->EffectToApply);
@@ -127,6 +129,8 @@ void AEffectActorBase::OnEffectOverlap(AActor* TargetActor)
 
 void AEffectActorBase::OnEffectEndOverlap(AActor* TargetActor)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies) return;
+
 	if (EffectApplicationPolicy == EEffectApplicationPolicy::EEAP_ApplyOnEndOverlap)
 	{
 		ApplyEffectToTarget(TargetActor, EffectActorDataAsset->EffectToApply);
@@ -156,6 +160,8 @@ void AEffectActorBase::OnEffectEndOverlap(AActor* TargetActor)
 
 void AEffectActorBase::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGameplayEffect> GameplayEffectClass)
 {
+	if (TargetActor->ActorHasTag(FName("Enemy")) && !bApplyEffectToEnemies) return;
+	
 	const APawn* TargetPawn = Cast<APawn>(TargetActor);
 	if (!TargetPawn || !TargetPawn->GetPlayerState()) return;
 	UAbilitySystemComponent* TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetPawn->GetPlayerState());
@@ -171,5 +177,10 @@ void AEffectActorBase::ApplyEffectToTarget(AActor* TargetActor, TSubclassOf<UGam
 	if (bIsInfiniteDuration && EffectRemovalPolicy == EEffectRemovalPolicy::EERP_RemoveOnEndOverlap)
 	{
 		ActiveEffectsMap.Add(ActiveEffectHandle, TargetASC);
+	}
+
+	if (bDestroyOnEffectApplied && !bIsInfiniteDuration)
+	{
+		Destroy();
 	}
 }

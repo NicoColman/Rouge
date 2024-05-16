@@ -6,6 +6,9 @@
 #include "CharacterBase.h"
 #include "CharacterEnemy.generated.h"
 
+class UBehaviorTree;
+class ARougeAIController;
+
 UCLASS()
 class ROUGE_API ACharacterEnemy : public ACharacterBase
 {
@@ -13,6 +16,7 @@ class ROUGE_API ACharacterEnemy : public ACharacterBase
 
 public:
 	ACharacterEnemy();
+	virtual void PossessedBy(AController* NewController) override;
 	virtual void Tick(float DeltaTime) override;
 
 	/** Begin ICharacterBaseInterface */
@@ -26,4 +30,8 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	int32 Level;
 
+	UPROPERTY(EditAnywhere, Category = "AI")
+	TObjectPtr<UBehaviorTree> BehaviorTree;
+	UPROPERTY()
+	TObjectPtr<ARougeAIController> AIController;
 };
