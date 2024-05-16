@@ -4,6 +4,12 @@
 #include "GASManager/AbilitySystem/ASCBase.h"
 
 #include "GASManager/GameplayAbilities/InputBaseAbility.h"
+#include "Rouge/RougeLogChannels.h"
+
+UASCBase::UASCBase()
+{
+	bStartupAbilitiesGiven = false;
+}
 
 void UASCBase::AbilityActorInfoSet()
 {
@@ -22,6 +28,8 @@ void UASCBase::AddCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>
 			GiveAbility(AbilitySpec);
 		}
 	}
+	bStartupAbilitiesGiven = true;
+	OnAbilitiesGiven.Broadcast(this);
 }
 
 void UASCBase::AddPassiveCharacterAbilities(const TArray<TSubclassOf<UGameplayAbility>>& Abilities)
@@ -81,6 +89,44 @@ void UASCBase::AbilityInputTagReleased(const FGameplayTag InputTag)
 	}
 }
 
+void UASCBase::ForEachAbility(const FForEachAbility& Delegate)
+{
+	FScopedAbilityListLock ActiveScopeLoc(*this);
+	for (const FGameplayAbilitySpec& AbilitySpec : GetActivatableAbilities())
+	{
+		if (!Delegate.ExecuteIfBound(AbilitySpec))
+		{
+			UE_LOG(LogRouge, Error, TEXT("ASCBase: ForEachAbility Delegate failed to execute on AbilitySpec: %s, in %hs"), *AbilitySpec.Ability->GetName(), __FUNCTION__);
+		}
+	}
+}
+
+FGameplayTag UASCBase::GetAbilityTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	if (!AbilitySpec.Ability) return FGameplayTag();
+
+	for (FGameplayTag Tag : AbilitySpec.Ability.Get()->AbilityTags)
+	{
+		if (Tag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Abilities"))))
+		{
+			return Tag;
+		}
+	}
+	return FGameplayTag();
+}
+
+FGameplayTag UASCBase::GetInputTagFromSpec(const FGameplayAbilitySpec& AbilitySpec)
+{
+	for (FGameplayTag InputTag : AbilitySpec.DynamicAbilityTags)
+	{
+		if (InputTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("InputTag"))))
+		{
+			return InputTag;
+		}
+	}
+	return FGameplayTag();
+}
+
 FGameplayTag UASCBase::GetStatusFromSpec(const FGameplayAbilitySpec& AbilitySpec)
 {
 	for (FGameplayTag StatusTag : AbilitySpec.DynamicAbilityTags)
@@ -107,6 +153,19 @@ FGameplayAbilitySpec* UASCBase::GetSpecFromAbilityTag(const FGameplayTag& Abilit
 		}
 	}
 	return nullptr;
+}
+
+// This function is called after the Abilities has been given by the Server
+void UASCBase::OnRep_ActivateAbilities()
+{
+	Super::OnRep_ActivateAbilities();
+
+	// This is a way for not calling the OnAbilitiesGiven delegate multiple times, because the bool is not replicated this will work for clients.
+	if (!bStartupAbilitiesGiven)
+	{
+		bStartupAbilitiesGiven = true;
+		OnAbilitiesGiven.Broadcast(this);
+	}
 }
 
 void UASCBase::ServerUpgradeAbility_Implementation(const FGameplayTag& AbilityTag)

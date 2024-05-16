@@ -31,7 +31,7 @@ void UPlayerShockWaveAbility::ActivateAbility(const FGameplayAbilitySpecHandle H
 		);
 
 	FGameplayCueParameters CueParameters;
-	CueParameters.AggregatedSourceTags.AddTag(FRougeGameplayTags::Get().Ability_Shockwave);
+	CueParameters.AggregatedSourceTags.AddTag(FRougeGameplayTags::Get().Abilities_Shockwave);
 	GetAbilitySystemComponentFromActorInfo()->ExecuteGameplayCue(FRougeGameplayTags::Get().GameplayCue_Ability_Base, CueParameters);
 	
 	for (FHitResult HitResult : HitResults)

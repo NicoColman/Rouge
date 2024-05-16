@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Object.h"
-#include "GameplayTagContainer.h"
 #include "RougeWidgetController.generated.h"
 
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, float, AbilityInfo);
+struct FRougeAbilityInfo;
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FAbilityInfoSignature, const FRougeAbilityInfo&, AbilityInfo);
 
 USTRUCT(BlueprintType)
 struct FWidgetControllerParams

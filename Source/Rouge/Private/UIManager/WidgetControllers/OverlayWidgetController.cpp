@@ -3,7 +3,9 @@
 
 #include "UIManager/WidgetControllers/OverlayWidgetController.h"
 
+#include "GASManager/AbilitySystem/ASCBase.h"
 #include "GASManager/AttributeSet/AttributeSetBase.h"
+#include "GASManager/GASDataAssets/AbilityInfoDataAsset.h"
 #include "GASManager/GASDataAssets/LevelUpInfoDataAsset.h"
 #include "PlayerState/PlayerStateBase.h"
 
@@ -30,6 +32,18 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	
 	AbilitySystemComponent->GetGameplayAttributeValueChangeDelegate(
 		AttributeSetBase->GetMaxHealthAttribute()).AddUObject(this, &UOverlayWidgetController::MaxHealthChanged);
+
+	if (UASCBase* ASC = CastChecked<UASCBase>(AbilitySystemComponent))
+	{
+		if (ASC->bStartupAbilitiesGiven)
+		{
+			OnInitializeStartupAbilities(ASC);
+		}
+		else
+		{
+			ASC->OnAbilitiesGiven.AddUObject(this, &UOverlayWidgetController::OnInitializeStartupAbilities);
+		}
+	}
 }
 
 void UOverlayWidgetController::HealthChanged(const FOnAttributeChangeData& Data) const
@@ -65,4 +79,20 @@ void UOverlayWidgetController::XPChanged(const int32 NewXP) const
 
 		OnXPChanged.Broadcast(XPBarPercent);
 	}
+}
+
+void UOverlayWidgetController::OnInitializeStartupAbilities(UASCBase* ASC)
+{
+	if (!ASC->bStartupAbilitiesGiven) return;
+
+	FForEachAbility ExecuteForEachAbility;
+	ExecuteForEachAbility.BindLambda(
+		[this, ASC](const FGameplayAbilitySpec& Spec)
+		{
+			FRougeAbilityInfo Info = AbilityInfoDataAsset->GetAbilityInfoFromTag(ASC->GetAbilityTagFromSpec(Spec));
+			Info.InputTag = ASC->GetInputTagFromSpec(Spec);
+			OnAbilityInfo.Broadcast(Info);
+		}
+	);
+	ASC->ForEachAbility(ExecuteForEachAbility);
 }
