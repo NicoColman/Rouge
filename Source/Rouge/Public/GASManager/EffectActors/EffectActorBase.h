@@ -51,7 +51,9 @@ protected:
 	/**
 	 * EffectActorBase Variables
 	 */
+	bool bDestroyOnEffectApplied;
 	bool bDestroyOnEffectRemoval;
+	bool bApplyEffectToEnemies;
 	float ActorLevel;
 	
 	UPROPERTY()

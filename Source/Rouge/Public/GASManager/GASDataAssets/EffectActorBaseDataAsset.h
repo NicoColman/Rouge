@@ -53,39 +53,42 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
 	float ActorScale = 1.f;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|ObjectType")
 	EObjectType ObjectType;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|ObjectType")
 	TObjectPtr<UObject> EffectActorObject;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|ObjectType")
 	EFlipbookRotation FlipbookRotation;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Overlap")
 	bool bUseSphereOverlap;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Overlap")
 	float SphereRadius;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	EGameplayEffectDurationType DurationType;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	EEffectApplicationPolicy EffectApplicationPolicy;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	EEffectRemovalPolicy EffectRemovalPolicy;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	TSubclassOf<class UGameplayEffect> EffectToApply;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
+	bool bApplyEffectToEnemies;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	bool bDestroyOnEffectApplied;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base|Effect Config")
 	bool bDestroyOnEffectRemoval;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Effect Base")
+	UPROPERTY()
 	TObjectPtr<class UPaperFlipbook> WeaponSprite;
 };
