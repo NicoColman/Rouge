@@ -186,6 +186,31 @@ int32 ACharacterPlayer::GetSpellPointsRewards(const int32 Level) const
 	return PS->LevelUpInfo->LevelUpInfo[Level].AbilityPointAward;
 }
 
+void ACharacterPlayer::SetChangeWorldLastLocation(const FGameplayTag& WorldTag, const FVector& Location)
+{
+	if (WorldTag.MatchesTag(FRougeGameplayTags::Get().World_First))
+	{
+		FirstWorldLocation = Location;
+	}
+	if (WorldTag.MatchesTag(FRougeGameplayTags::Get().World_Second))
+	{
+		SecondWorldLocation = Location;
+	}
+}
+
+FVector ACharacterPlayer::GetChangeWorldLastLocation(const FGameplayTag& WorldTag) const
+{
+	if (WorldTag.MatchesTag(FRougeGameplayTags::Get().World_First))
+	{
+		return FirstWorldLocation;
+	}
+	if (WorldTag.MatchesTag(FRougeGameplayTags::Get().World_Second))
+	{
+		return SecondWorldLocation;
+	}
+	return FVector::ZeroVector;
+}
+
 void ACharacterPlayer::LevelUp()
 {
 	MulticastLevelUpNiagara();

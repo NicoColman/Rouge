@@ -34,6 +34,7 @@ public:
 	FGameplayTag InputTag_2;
 	FGameplayTag InputTag_3;
 	FGameplayTag InputTag_4;
+	FGameplayTag InputTag_ChangeWorld;
 	/** End Input Tags */
 
 	/** Begin Input Block Tags */
@@ -152,6 +153,7 @@ public:
 	FGameplayTag Debuff;
 	FGameplayTag Debuff_Burn;
 	FGameplayTag Debuff_Stun;
+	FGameplayTag Debuff_Slowed;
 
 	FGameplayTag Debuff_Chance;
 	FGameplayTag Debuff_Damage;
@@ -183,6 +185,18 @@ public:
 	// Melee Weapons
 	FGameplayTag WeaponType_Melee;
 	/** End WeaponType Tags*/
+
+
+	/**
+	 *	World Tags
+	 */
+
+
+	/** Begin World Tags */
+	FGameplayTag World;
+	FGameplayTag World_First;
+	FGameplayTag World_Second;
+	/** End World Tags */
 	
 private:
     static FRougeGameplayTags GameplayTags;

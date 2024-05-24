@@ -6,6 +6,7 @@
 #include "UObject/Interface.h"
 #include "CharacterPlayerInterface.generated.h"
 
+struct FGameplayTag;
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
 class UCharacterPlayerInterface : public UInterface
@@ -31,5 +32,6 @@ public:
 	virtual int32 FindLevelForXP(const int32 InXP) const = 0;
 	virtual int32 GetAttributesPointsRewards(const int32 Level) const = 0;
 	virtual int32 GetSpellPointsRewards(const int32 Level) const = 0;
-	
+	virtual void SetChangeWorldLastLocation(const FGameplayTag& WorldTag, const FVector& Location) = 0;
+	virtual FVector GetChangeWorldLastLocation(const FGameplayTag& WorldTag) const = 0;	
 };

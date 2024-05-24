@@ -7,6 +7,7 @@
 #include "Interfaces/CharacterInterfaces/CharacterPlayerInterface.h"
 #include "CharacterPlayer.generated.h"
 
+
 class UNiagaraComponent;
 
 UCLASS()
@@ -34,6 +35,8 @@ public:
 	virtual int32 FindLevelForXP(const int32 InXP) const override;
 	virtual int32 GetAttributesPointsRewards(const int32 Level) const override;
 	virtual int32 GetSpellPointsRewards(const int32 Level) const override;
+	virtual void SetChangeWorldLastLocation(const FGameplayTag& WorldTag, const FVector& Location) override;
+	virtual FVector GetChangeWorldLastLocation(const FGameplayTag& WorldTag) const override;
 	/** End ICharacterPlayerInterface */
 
 protected:
@@ -59,6 +62,9 @@ protected:
 private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastLevelUpNiagara();
+
+	FVector FirstWorldLocation;
+	FVector SecondWorldLocation;
 	
 public:
 	USpringArmComponent* GetCameraBoom() const { return CameraBoom; }

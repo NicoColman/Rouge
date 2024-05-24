@@ -54,6 +54,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("InputTag.4"),
 		FString("Input tag for 4")
 		);
+	GameplayTags.InputTag_ChangeWorld = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("InputTag.ChangeWorld"),
+		FString("Input tag for Change World")
+		);
 	/** End Input Tags */
 
 	/** Begin Input Block Tags */
@@ -375,6 +379,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("Debuff.Stun"),
 		FString("Debuff Stun")
 		);
+	GameplayTags.Debuff_Slowed = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Debuff.Slowed"),
+		FString("Debuff Slowed")
+		);
 	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Fire,GameplayTags.Debuff_Burn);
 	GameplayTags.DamageTypesToDebuffs.Add(GameplayTags.Damage_Lightning,GameplayTags.Debuff_Stun);
 	/** End Debuff Tags */
@@ -433,6 +441,28 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FString("Weapon Type Melee")
 		);
 	/** End WeaponType Tags*/
+
+
+
+	/**
+	 *	World Tags
+	 */
+
+
+	/** Begin World Tags */
+	GameplayTags.World = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("World"),
+		FString("World")
+		);
+	GameplayTags.World_First = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("World.First"),
+		FString("World First")
+		);
+	GameplayTags.World_Second = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("World.Second"),
+		FString("World Second")
+		);
+	/** End World Tags */
 }
 
 FGameplayTag FRougeGameplayTags::GetMatchTagFromASC(UAbilitySystemComponent* ASC, const FName& RequestedTag)
