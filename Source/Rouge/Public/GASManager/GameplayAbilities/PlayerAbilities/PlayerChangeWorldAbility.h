@@ -24,4 +24,11 @@ protected:
 
 	UPROPERTY(EditDefaultsOnly)
 	FVector WorldStartSecondPosition;
+
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UGameplayEffect> SlowEnemiesEffect;
+
+private:
+	UPROPERTY()
+	TMap<FActiveGameplayEffectHandle ,AActor*> HitActors; 
 };
