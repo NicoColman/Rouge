@@ -168,10 +168,18 @@ void UAttributeSetBase::HandleIncomingDamage(const FEffectProperties& Props)
 	if (NewHealth <= 0.f)
 	{
 		Props.TargetCharacter->Destroy();
-		if (IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode()))
+		IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode());
+		if (!GameMode) return;
+		
+		if (Props.TargetCharacter->Implements<UCharacterPlayerInterface>())
 		{
 			GameMode->RequestRespawn(Props.TargetController);
 		}
+		else
+		{
+			GameMode->EnemyKilled();
+		}
+		
 		SendXPEvent(Props);
 	}
 	else
@@ -251,7 +259,7 @@ void UAttributeSetBase::HandleIncomingXP(const FEffectProperties& Props)
 {
 	const float LocalIncomingXP = GetIncomingXP();
 	SetIncomingXP(0.f);
-
+	
 	if (ICharacterPlayerInterface* PlayerInterface = Cast<ICharacterPlayerInterface>(Props.TargetCharacter))
 	{
 		const int32 CurrentLevel = Cast<ICharacterBaseInterface>(Props.SourceCharacter)->GetCharacterLevel();
@@ -271,7 +279,6 @@ void UAttributeSetBase::HandleIncomingXP(const FEffectProperties& Props)
 				PlayerInterface->LevelUp();
 			}
 		}
-			
 		PlayerInterface->AddToXP(LocalIncomingXP);
 	}
 }
@@ -280,7 +287,14 @@ void UAttributeSetBase::SendXPEvent(const FEffectProperties& Props)
 {
 	if (const ICharacterBaseInterface* CharacterInterface = Cast<ICharacterBaseInterface>(Props.TargetCharacter))
 	{
-		const int32 XPReward = URougeLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, CharacterInterface->GetCharacterLevel());
+		int32 XPReward = URougeLibrary::GetXPRewardForClassAndLevel(Props.TargetCharacter, CharacterInterface->GetCharacterLevel());;
+		if (const IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(GetWorld()->GetAuthGameMode()))
+		{
+			if (GameMode->IsCrazyMode())
+			{
+				XPReward = 1000;
+			}
+		}
 		const FGameplayTag XPEventTag = FRougeGameplayTags::Get().SetByCaller_Attribute_IncomingXP;
 		FGameplayEventData Payload;
 		Payload.EventTag = XPEventTag;

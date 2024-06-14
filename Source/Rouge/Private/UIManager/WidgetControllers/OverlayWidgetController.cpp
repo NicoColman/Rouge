@@ -3,6 +3,7 @@
 
 #include "UIManager/WidgetControllers/OverlayWidgetController.h"
 
+#include "GameMode/RougeGameModeBase.h"
 #include "GASManager/AbilitySystem/ASCBase.h"
 #include "GASManager/AttributeSet/AttributeSetBase.h"
 #include "GASManager/GASDataAssets/AbilityInfoDataAsset.h"
@@ -24,6 +25,16 @@ void UOverlayWidgetController::BindCallbacksToDependencies()
 	PlayerStateBase->OnLevelChangedDelegate.AddLambda(
 		[this](const int32 NewLevel) { OnLevelChanged.Broadcast(NewLevel); }
 	);
+
+	if (ARougeGameModeBase* GameModeBase = Cast<ARougeGameModeBase>(GetWorld()->GetAuthGameMode()))
+	{
+		GameModeBase->OnNewRound.AddLambda(
+			[this](const int32 NewRound) { OnRoundChanged.Broadcast(NewRound); }
+		);
+		GameModeBase->OnNewEnemies.AddLambda(
+			[this](const int32 NewEnemies) { OnEnemies.Broadcast(NewEnemies); }
+		);
+	}
 	
 	const UAttributeSetBase* AttributeSetBase = CastChecked<UAttributeSetBase>(AttributeSet);
 	

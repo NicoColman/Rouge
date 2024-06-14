@@ -57,6 +57,9 @@ public:
 	FGameplayTag StateTag_Player_AbleEquip;
 	FGameplayTag StateTag_Player_Dashing;
 	FGameplayTag StateTag_Player_Healing;
+
+	// AI State Tags
+	FGameplayTag StateTag_AI_Attacking;
 	/** End State Tags */
 
 	
@@ -100,10 +103,14 @@ public:
 	/** End Effect Tags */
 	
 	/** Begin Abilities Tags*/
+	// Player Abilities
 	FGameplayTag Abilities_Fire_Fireball;
 	FGameplayTag Abilities_Dash;
 	FGameplayTag Abilities_Pickup;
 	FGameplayTag Abilities_Shockwave;
+
+	// AIAbilities
+	FGameplayTag Abilities_AI_Attack;
 	/** End Abilities Tags */
 
 	/** Begin Cooldown Tags */
@@ -111,14 +118,19 @@ public:
 	FGameplayTag CooldownTag_Fireball;
 	FGameplayTag CooldownTag_Shockwave;
 	FGameplayTag CooldownTag_Heal;
+	FGameplayTag CooldownTag_ChangeWorld;
+	FGameplayTag CooldownTag_AI_Attack;
 	/** End Cooldown Tags */
 
 	/** Begin GameplayCue Tags */
 	// Static Tags
 	FGameplayTag GameplayCue_Ability_Spell_Cast;
 	FGameplayTag GameplayCue_Ability_Base;
+	FGameplayTag GameplayCue_Ability_AI_Damage;
+
 	FGameplayTag GameplayCue_Effect_Health;
 	FGameplayTag GameplayCue_Effect_Mana;
+
 	// Loop Tags
 	FGameplayTag GameplayCue_Ability_PickupLoop;
 	FGameplayTag GameplayCue_Ability_RegenerationLoop;

@@ -107,6 +107,12 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("StateTag.Player.Healing"),
 		FString("State tag for Healing")
 		);
+
+	// AI State Tags
+	GameplayTags.StateTag_AI_Attacking = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("StateTag.AI.Attacking"),
+		FString("State tag for Attacking")
+		);
 	/** End State Tags */
 
 	
@@ -238,6 +244,12 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("Abilities.Shockwave"),
 		FString("Abilities Shockwave")
 		);
+
+	// AIAbilities
+	GameplayTags.Abilities_AI_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("Abilities.AI.Attack"),
+		FString("Abilities AI Attack")
+		);
 	/** End Abilities Tags */
 
 	/** Begin Cooldown Tags */
@@ -257,6 +269,14 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 		FName("CooldownTag.Heal"),
 		FString("Cooldown Heal")
 		);
+	GameplayTags.CooldownTag_ChangeWorld = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.ChangeWorld"),
+		FString("Cooldown Change World")
+		);
+	GameplayTags.CooldownTag_AI_Attack = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("CooldownTag.AI.Attack"),
+		FString("Cooldown AI Attack")
+		);
 	/** End Cooldown Tags */
 
 	/** Begin GameplayCue Tags */
@@ -269,6 +289,10 @@ void FRougeGameplayTags::InitializeNativeGameplayTags(){
 	FName("GameplayCue.Ability.Base"),
 	FString("Gameplay Cue for Ability Base")
 	);
+	GameplayTags.GameplayCue_Ability_AI_Damage = UGameplayTagsManager::Get().AddNativeGameplayTag(
+		FName("GameplayCue.Ability.AI.Damage"),
+		FString("Gameplay Cue for AI Damage Ability")
+		);
 	GameplayTags.GameplayCue_Effect_Health = UGameplayTagsManager::Get().AddNativeGameplayTag(
 		FName("GameplayCue.Effect.Health"),
 		FString("Gameplay Cue for Health Effect")

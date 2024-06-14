@@ -19,6 +19,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 	virtual void PostInitializeComponents() override;
 
+	void SetActorLevel(const int32 NewLevel) { ActorLevel = NewLevel; }
+
 protected:
 	virtual void BeginPlay() override;
 

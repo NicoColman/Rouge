@@ -25,4 +25,7 @@ public:
 	virtual AActor* GetWeaponFromPool(const FGameplayTag& WeaponTag) = 0;
 	virtual void ReturnWeaponToPool(AActor* Weapon) = 0;
 	virtual void RequestRespawn(APlayerController* PlayerController) = 0;
+	virtual void EnemyKilled() = 0;
+	virtual void SetCrazyMode(const bool bIsCrazy) = 0;
+	virtual bool IsCrazyMode() const = 0;
 };

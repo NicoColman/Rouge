@@ -30,5 +30,9 @@ protected:
 
 private:
 	UPROPERTY()
-	TMap<FActiveGameplayEffectHandle ,AActor*> HitActors; 
+	TMap<FActiveGameplayEffectHandle ,AActor*> HitActors;
+
+	void RemoveEffect();
+	TArray<AActor*> ApplyEffect();
+	void ChangeWorld();
 };

@@ -169,8 +169,7 @@ void UExecCalc_Damage::Execute_Implementation(const FGameplayEffectCustomExecuti
 void UExecCalc_Damage::DetermineDebuff(const FGameplayEffectCustomExecutionParameters& ExecutionParams,
                                        const FGameplayEffectSpec& Spec,
                                        FAggregatorEvaluateParameters EvaluationParameters,
-                                       const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs)
-const
+                                       const TMap<FGameplayTag, FGameplayEffectAttributeCaptureDefinition>& TagsToDefs) const
 {
 	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
 	for (TTuple<FGameplayTag, FGameplayTag> Pair : GameplayTags.DamageTypesToDebuffs)

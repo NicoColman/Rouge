@@ -7,20 +7,25 @@
 #include "AbilitySystemComponent.h"
 #include "GlobalManagers/RougeGameplayTags.h"
 #include "Interfaces/CharacterInterfaces/CharacterPlayerInterface.h"
+#include "Interfaces/GameModeInterfaces/RougeGameModeInterface.h"
 #include "Kismet/GameplayStatics.h"
+#include "GameFramework/GameModeBase.h"
 
 void UPlayerChangeWorldAbility::ActivateAbility(const FGameplayAbilitySpecHandle Handle,
                                                 const FGameplayAbilityActorInfo* ActorInfo, const FGameplayAbilityActivationInfo ActivationInfo,
                                                 const FGameplayEventData* TriggerEventData)
 {
-	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
 	ApplyCooldown(Handle, ActorInfo, ActivationInfo);
-	AActor* Actor = GetAvatarActorFromActorInfo();
-	ICharacterPlayerInterface* Player = Cast<ICharacterPlayerInterface>(Actor);
+	RemoveEffect();
+	
+	ChangeWorld();
+}
 
+void UPlayerChangeWorldAbility::RemoveEffect()
+{
 	if (HitActors.Num() > 0)
 	{
-		for (auto& Pair : HitActors)
+		for (const auto& Pair : HitActors)
 		{
 			if (UAbilitySystemComponent* const TargetASC = UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(Pair.Value))
 			{
@@ -29,7 +34,10 @@ void UPlayerChangeWorldAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 		}
 		HitActors.Empty();
 	}
+}
 
+TArray<AActor*> UPlayerChangeWorldAbility::ApplyEffect()
+{
 	TArray<AActor*> HitPlayerActorsArray;
 	UGameplayStatics::GetAllActorsWithTag(this, "Player", HitPlayerActorsArray);
 	
@@ -59,7 +67,16 @@ void UPlayerChangeWorldAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 			HitActors.Add(AppliedEffect, HitActor);
 		}
 	}
+	return HitPlayerActorsArray;
+}
+
+void UPlayerChangeWorldAbility::ChangeWorld()
+{
+	const FRougeGameplayTags& GameplayTags = FRougeGameplayTags::Get();
 	
+	AActor* Actor = GetAvatarActorFromActorInfo();
+	ICharacterPlayerInterface* Player = Cast<ICharacterPlayerInterface>(Actor);
+
 	if (CurrentWorld.IsValid())
 	{
 		Player->SetChangeWorldLastLocation(CurrentWorld, Actor->GetActorLocation());
@@ -70,10 +87,23 @@ void UPlayerChangeWorldAbility::ActivateAbility(const FGameplayAbilitySpecHandle
 		{
 			NewLocation = WorldStartSecondPosition;
 		}
+		const TArray<AActor*> HitPlayerActorsArray = ApplyEffect();
+		
 		for (AActor* PlayerActor : HitPlayerActorsArray)
 		{
 			PlayerActor->SetActorLocation(NewLocation);
+			if (IRougeGameModeInterface* GameMode = Cast<IRougeGameModeInterface>(UGameplayStatics::GetGameMode(this)))
+			{
+				if (CurrentWorld == GameplayTags.World_First)
+				{
+					GameMode->SetCrazyMode(false);
+				}
+				else
+				{
+					GameMode->SetCrazyMode(true);
+				}
+			}
 		}
-		EndAbility(Handle, ActorInfo, ActivationInfo, true, true);
+		EndAbility(GetCurrentAbilitySpecHandle(), GetCurrentActorInfo(), GetCurrentActivationInfo(), true, false);
 	}
 }
