@@ -24,6 +24,8 @@ public:
 	virtual int32 GetCharacterLevel() const override { return Level; }
 	/** End ICharacterBaseInterface */
 
+	void SetLevel(const int32 NewLevel) { Level = NewLevel; }
+
 protected:
 	virtual void BeginPlay() override;
 	

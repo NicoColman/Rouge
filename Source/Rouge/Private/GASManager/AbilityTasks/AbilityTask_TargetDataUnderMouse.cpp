@@ -46,6 +46,7 @@ void UAbilityTask_TargetDataUnderMouse::SendMouseCursorData() const
 	FGameplayAbilityTargetData_SingleTargetHit* TargetData = new FGameplayAbilityTargetData_SingleTargetHit();
 	TargetData->HitResult = HitResult;
 	TargetDataHandle.Add(TargetData);
+
 	
 	AbilitySystemComponent->ServerSetReplicatedTargetData(
 		GetAbilitySpecHandle(),

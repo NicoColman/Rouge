@@ -147,7 +147,6 @@ void ARougePlayerController::SetSpriteDirection(const FVector2D& InputAxisVector
 void ARougePlayerController::Look(const FInputActionValue& InputActionValue)
 {
 	const FVector2D InputAxisVector = InputActionValue.Get<FVector2D>();
-    
 	GetPawn()->AddControllerYawInput(InputAxisVector.X);
 
 	constexpr float PitchSensitivity = 2.2f;

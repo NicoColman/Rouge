@@ -1,0 +1,15 @@
+Begin Object Class=/Script/Engine.Blueprint Name="BP_CameraShake_Sprint" ExportPath="/Script/Engine.Blueprint'/Game/Blueprints/CharacterManager/Player/CameraShakes/BP_CameraShake_Sprint.BP_CameraShake_Sprint'"
+   Begin Object Class=/Script/Engine.EdGraph Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/Blueprints/CharacterManager/Player/CameraShakes/BP_CameraShake_Sprint.BP_CameraShake_Sprint:EventGraph'"
+   End Object
+   Begin Object Name="EventGraph" ExportPath="/Script/Engine.EdGraph'/Game/Blueprints/CharacterManager/Player/CameraShakes/BP_CameraShake_Sprint.BP_CameraShake_Sprint:EventGraph'"
+      Schema="/Script/CoreUObject.Class'/Script/BlueprintGraph.EdGraphSchema_K2'"
+      bAllowDeletion=False
+      GraphGuid=5739F433425ADA78B13441AE80BAC1E2
+   End Object
+   ParentClass="/Script/CoreUObject.Class'/Script/GameplayCameras.LegacyCameraShake'"
+   BlueprintSystemVersion=2
+   UbergraphPages(0)="/Script/Engine.EdGraph'EventGraph'"
+   GeneratedClass="/Script/Engine.BlueprintGeneratedClass'BP_CameraShake_Sprint_C'"
+   bLegacyNeedToPurgeSkelRefs=False
+   BlueprintGuid=2C891A594497380B0B8907B4744BD612
+End Object

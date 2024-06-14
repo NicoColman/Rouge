@@ -32,6 +32,11 @@ public:
 	FOnAttributeChangedSignature OnXPChanged;
 	UPROPERTY(BlueprintAssignable, Category = "GAS|Level")
 	FOnPlayerStatChangedSignature OnLevelChanged;
+	UPROPERTY(BlueprintAssignable, Category = "GameMode|Round")
+	FOnPlayerStatChangedSignature OnRoundChanged;
+
+	UPROPERTY(BlueprintAssignable, Category = "GameMode|Round")
+	FOnPlayerStatChangedSignature OnEnemies;
 
 protected:
 	void HealthChanged(const FOnAttributeChangeData& Data) const;
