@@ -43,3 +43,6 @@ Distributed under the MIT License. See `LICENSE` file for more information.
 
 This game was developed as a learning project. The code and systems design, while functional, are not optimized for production use and may embody unconventional or deprecated methods due to the experimental nature of the learning process.
 Anyone is welcome to fork and expand the project.
+
+### Gameplay Video
+https://drive.google.com/file/d/1XsdnpG7bcCcrkLy8EhJ4xk4e3mY2fl1J/view?usp=sharing
