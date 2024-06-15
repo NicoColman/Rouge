@@ -24,6 +24,7 @@ ARougeGameModeBase::ARougeGameModeBase()
 	CurrentRound = 0;
 	EnemiesToKill = 1;
 	bIsCrazyMode = false;
+	bStartCrazyMode = false;
 }
 
 void ARougeGameModeBase::BeginPlay()
@@ -106,7 +107,8 @@ void ARougeGameModeBase::SetCrazyMode(const bool bIsCrazy)
 	}
 	else
 	{
-		StartNewRound();
+		const int32 EnemiesLeft = EnemiesToKill - EnemiesKilled;
+		OnNewEnemies.Broadcast(EnemiesLeft);
 	}
 }
 
